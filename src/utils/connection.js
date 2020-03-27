@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 
-const connection = 'mongodb://mongo:27017/';
-
 const connectDB = () => {
-    return mongoose.connect(connection);
+    return mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qrary', { useUnifiedTopology: true, useCreateIndex: true, useNewUrlParser: true});
 };
 
 module.exports = connectDB;
