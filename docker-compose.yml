@@ -1,6 +1,6 @@
-version: "3"
+version: "3.7"
 services:
-  app:
+  express_mongo:
     container_name: express_mongo
     restart: always
     build: ./
@@ -9,10 +9,27 @@ services:
     volumes:
     - .:/app
     - /app/node_modules
-    links:
+    depends_on:
       - mongo
+    environment:
+      - MONGODB_URI=mongodb://mongo/qrary
+    networks:
+      - express_mongo-network
   mongo:
     container_name: mongo
+    restart: always
     image: mongo
     ports:
     - "27017:27017"
+    volumes:
+    - mongo:/data/db
+    networks:
+    - express_mongo-network
+
+volumes:
+  mongo:
+    name: mongo
+
+networks:
+  express_mongo-network:
+    name: express_mongo-network
