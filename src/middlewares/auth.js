@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const urlExist = require('url-exists');
-const { FormatResponse } = require('../utils/formatResponse');
+const FormatResponse = require('../utils/formatResponse');
 
 const setUrlFoto = (npm) => {
     let prefixUrl = "https://media.unpad.ac.id/photo/mahasiswa/";
@@ -18,7 +18,7 @@ module.exports = {
             next();
         } catch (err) {
             res.status(401).json(
-                FormatResponse(false, 401, '', 0, "Token invalid, silahkan login terlebih dahulu", true)
+                FormatResponse(false, 401, '', "Token invalid, silahkan login terlebih dahulu", true)
             );
         }
     },
@@ -27,7 +27,7 @@ module.exports = {
             next();
         } else {
             res.status(401).json(
-                FormatResponse(false, 401, '', 0, 'User unAuthorized, forbidden access', true)
+                FormatResponse(false, 401, '', 'User unAuthorized, forbidden access', true)
             );
         }
     },
@@ -36,7 +36,7 @@ module.exports = {
             next();
         } else {
             res.status(404).json(
-                FormatResponse(false, 404, '', 0, 'Request data kosong', true)
+                FormatResponse(false, 404, '', 'Request data kosong', true)
             );
         }
     },
@@ -47,7 +47,7 @@ module.exports = {
                 next();
             }else{
                 res.status(404).json(
-                    FormatResponse(false, 404, '', 0, 'NPM tidak valid', true)
+                    FormatResponse(false, 404, '', 'NPM tidak valid', true)
                 );
             }
         });

@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { FormatResponse } = require('../utils/formatResponse');
+const FormatResponse = require('../utils/formatResponse');
 const round = 10;
 
 const setUrlFoto = (npm) => {
@@ -28,26 +28,26 @@ module.exports = {
                         urlFoto: setUrlFoto(req.body.npm)
                     }).then(user => {
                         res.status(200).json(
-                            FormatResponse(true, 200, user, 1, 'Registrasi berhasil', true)
+                            FormatResponse(true, 200, user, 'Registrasi berhasil', true)
                         );
                     }).catch(err => {
                         res.status(500).json(
-                            FormatResponse(false, 500, "", 0, `Registrasi gagal, ${err.message}`, true)
+                            FormatResponse(false, 500, "", `Registrasi gagal, ${err.message}`, true)
                         );
                     });
                 }).catch(err => {
                     res.status(500).json(
-                        FormatResponse(false, 500, "", 0, `Hashing pwd gagal, ${err.message}`, true)
+                        FormatResponse(false, 500, "", `Hashing pwd gagal, ${err.message}`, true)
                     );
                 });
             }else{
                 res.status(500).json(
-                    FormatResponse(false, 500, "", 0, 'Registrasi gagal, data sudah tersedia', true)
+                    FormatResponse(false, 500, "", 'Registrasi gagal, data sudah tersedia', true)
                 );
             }
         }).catch(err => {
             res.status(500).json(
-                FormatResponse(false, 500, "", 0, err.message, false)
+                FormatResponse(false, 500, "", err.message, false)
             );
         });
     },
@@ -68,17 +68,17 @@ module.exports = {
                 const token = jwt.sign(data, process.env.SECRET_KEY);
                 if(token){
                     res.status(200).json(
-                        FormatResponse(true, 200, token, 1, 'Login berhasil', true)
+                        FormatResponse(true, 200, token, 'Login berhasil', true)
                     );
                 }
             }else {
                 res.status(401).json(
-                    FormatResponse(false, 401, "", 0, 'Login tidak berhasil, npm atau password salah', true)
+                    FormatResponse(false, 401, "", 'Login tidak berhasil, npm atau password salah', true)
                 );
             }
         }).catch(err => {
             res.status(401).json(
-                FormatResponse(false, 401, "", 0, 'Login tidak berhasil, NPM belum terdaftar', true)
+                FormatResponse(false, 401, "", 'Login tidak berhasil, NPM belum terdaftar', true)
             );
         });
     }
