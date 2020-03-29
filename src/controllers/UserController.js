@@ -90,7 +90,7 @@ module.exports = {
 
         if (oldPwd !== confirmOldPwd) {
             res.status(404).json(
-                FormatResponse(false, 404, '', 'Konfirmasi password tidak sama', true)
+                FormatResponse(false, 404, '', 'Konfirmasi kata sandi tidak sama', true)
             );
         } else {
             User.findById(id).orFail().then(result => {
@@ -101,7 +101,7 @@ module.exports = {
                             pwd: hashed
                         }).orFail().then(result => {
                             res.status(200).json(
-                                FormatResponse(true, 200, result, 'User password berhasil diperbarui', true)
+                                FormatResponse(true, 200, result, 'Kata sandi berhasil diperbarui', true)
                             );
                         }).catch(err => {
                             res.status(404).json(
@@ -111,7 +111,7 @@ module.exports = {
                     });
                 } else {
                     res.status(404).json(
-                        FormatResponse(false, 404, '', 'Password lama salah', true)
+                        FormatResponse(false, 404, '', 'Kata sandi lama salah', true)
                     );
                 }
             }).catch(err => {
