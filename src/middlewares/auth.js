@@ -11,7 +11,7 @@ const setUrlFoto = (npm) => {
 
 module.exports = {
     isAuth: (req, res, next) => {
-        try{
+        try {
             const token = req.headers.token;
             let decoded = jwt.verify(token, process.env.SECRET_KEY);
             req.user = decoded;
@@ -45,9 +45,9 @@ module.exports = {
         urlExist(url, (err, exist) => {
             if (exist) {
                 next();
-            }else{
-                res.status(404).json(
-                    FormatResponse(false, 404, '', 'NPM tidak valid', true)
+            } else {
+                res.status(200).json(
+                    FormatResponse(true, 200, '', 'NPM tidak valid', true)
                 );
             }
         });
