@@ -13,43 +13,53 @@ const setUrlFoto = (npm) => {
 
 module.exports = {
     register: (req, res) => {
-        User.findOne({
-            email: req.body.email,
-            npm: req.body.npm
-        }).then(hasil => {
-            if (hasil == null) {
-                bcrypt.hash(req.body.pwd, round).then(hashed => {
-                    User.create({
-                        nama: req.body.nama,
-                        npm: req.body.npm,
-                        email: req.body.email,
-                        pwd: hashed,
-                        role: req.body.role,
-                        urlFoto: setUrlFoto(req.body.npm)
-                    }).then(user => {
-                        res.status(200).json(
-                            FormatResponse(true, 200, user, 'Pendaftaran berhasil', true)
-                        );
+        let pwd = req.body.pwd;
+        let confirmPwd = req.body.confirmPwd;
+
+        if (pwd !== confirmPwd) {
+            res.status(200).json(
+                FormatResponse(true, 200, '', 'Konfirmasi kata sandi tidak sama', true)
+            );
+        } else {
+            User.findOne({
+                $or: [
+                    { 'email': req.body.email }, { 'npm': req.body.npm }
+                ]
+            }).then(hasil => {
+                if (hasil == null) {
+                    bcrypt.hash(req.body.pwd, round).then(hashed => {
+                        User.create({
+                            nama: req.body.nama,
+                            npm: req.body.npm,
+                            email: req.body.email,
+                            pwd: hashed,
+                            role: req.body.role,
+                            urlFoto: setUrlFoto(req.body.npm)
+                        }).then(user => {
+                            res.status(200).json(
+                                FormatResponse(true, 200, user, 'Pendaftaran berhasil', true)
+                            );
+                        }).catch(err => {
+                            res.status(200).json(
+                                FormatResponse(false, 200, "", `Pendaftaran tidak berhasil, ${err.message}`, true)
+                            );
+                        });
                     }).catch(err => {
-                        res.status(200).json(
-                            FormatResponse(false, 200, "", `Pendaftaran tidak berhasil, ${err.message}`, true)
+                        res.status(500).json(
+                            FormatResponse(false, 500, "", `Hashing pwd gagal, ${err.message}`, true)
                         );
                     });
-                }).catch(err => {
-                    res.status(500).json(
-                        FormatResponse(false, 500, "", `Hashing pwd gagal, ${err.message}`, true)
+                } else {
+                    res.status(200).json(
+                        FormatResponse(true, 200, "", 'Pendaftaran tidak berhasil, data sudah tersedia', true)
                     );
-                });
-            } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, "", 'Pendaftaran tidak berhasil, data sudah tersedia', true)
+                }
+            }).catch(err => {
+                res.status(500).json(
+                    FormatResponse(false, 500, "", err.message, false)
                 );
-            }
-        }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, "", err.message, false)
-            );
-        });
+            });
+        }
     },
     login: (req, res) => {
         User.findOne({
