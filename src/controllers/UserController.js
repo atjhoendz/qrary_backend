@@ -14,8 +14,53 @@ module.exports = {
     getAll: (req, res) => {
         User.find({}).then(result => {
             res.status(200).json(
-                FormatResponse(true, 200, result, 'Get all user success', true)
+                FormatResponse(true, 200, result, 'Mendapatkan data semua user berhasil', true)
             );
+        }).catch(err => {
+            res.status(500).json(
+                FormatResponse(false, 500, {}, err.message, true)
+            );
+        });
+    },
+    getPaginate: (req, res) => {
+        let page = req.params.page;
+        let limit = req.params.limit;
+
+        User.find({}).orFail().then(result => {
+            let total = Object.keys(result).length;
+            let newData = [];
+            let show;
+            if (page == 1) {
+                show = 0;
+            } else {
+                show = ((page - 1) * limit);
+            }
+
+            for (let i = 0; i < total; i++) {
+                if (i >= show && i <= show + limit - 1) {
+                    newData.push(result[i]);
+                } else if (i > show + limit) {
+                    break;
+                }
+            }
+
+            let isLast;
+            if (total <= page * limit && total > (page - 1) * limit) {
+                isLast = true;
+            } else {
+                isLast = false;
+            }
+
+            if (Object.keys(newData).length > 0) {
+                res.status(200).json(
+                    FormatResponse(true, 200, newData, 'Mendapatkan data user berhalaman berhasil', isLast)
+                );
+            } else {
+                res.status(200).json(
+                    FormatResponse(true, 200, {}, 'Data tidak ditemukan', true)
+                );
+            }
+
         }).catch(err => {
             res.status(500).json(
                 FormatResponse(false, 500, {}, err.message, true)
@@ -30,11 +75,11 @@ module.exports = {
 
         User.find(query).orFail().then(result => {
             res.status(200).json(
-                FormatResponse(true, 200, result, 'Get user success', true)
+                FormatResponse(true, 200, result, 'Mendapatkan data user berhasil', true)
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, {}, 'User not found', true)
+                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
             );
         });
     },
@@ -44,11 +89,11 @@ module.exports = {
             _id: id
         }).orFail().then(result => {
             res.status(200).json(
-                FormatResponse(true, 200, result, 'User deleted successfuly', true)
+                FormatResponse(true, 200, result, 'User berhasil dihapus', true)
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, {}, 'User not found', true)
+                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
             );
         });
     },
@@ -60,11 +105,11 @@ module.exports = {
             urlFoto: setUrlFoto(req.body.npm)
         }).orFail().then(result => {
             res.status(200).json(
-                FormatResponse(true, 200, result, 'User updated successfuly', true)
+                FormatResponse(true, 200, result, 'User berhasil diperbarui', true)
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, {}, 'User not found', true)
+                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
             );
         });
     },
@@ -74,11 +119,11 @@ module.exports = {
             role: req.body.role
         }).orFail().then(result => {
             res.status(200).json(
-                FormatResponse(true, 200, result, 'User role updated successfuly', true)
+                FormatResponse(true, 200, result, 'Role user berhasil diperbarui', true)
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, {}, 'User not found', true)
+                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
             );
         });
     },
