@@ -51,5 +51,19 @@ module.exports = {
                 );
             }
         });
+    },
+    isPageaNumber: (req, res, next) => {
+        let page = Number(req.params.page);
+        let limit = Number(req.params.limit);
+
+        if (isNaN(page) || isNaN(limit)) {
+            res.status(200).json(
+                FormatResponse(true, 200, {}, 'Page dan limit harus angka', true)
+            );
+        } else {
+            req.params.page = page;
+            req.params.limit = limit;
+            next();
+        }
     }
 };
