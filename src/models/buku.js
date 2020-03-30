@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const BukuSchema = new Schema({
     bahasa: String,
-    issn: {
+    isbn: {
         type: String,
         required: true
     },
@@ -14,7 +14,8 @@ const BukuSchema = new Schema({
     },
     deskripsi: String,
     penerbit: String,
-    penulis: String
+    penulis: String,
+    kategori: String
 });
 
 const Buku = mongoose.model("Buku", BukuSchema, "Buku");

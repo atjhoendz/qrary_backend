@@ -18,7 +18,7 @@ module.exports = {
             );
         }).catch(err => {
             res.status(500).json(
-                FormatResponse(false, 500, "", err.message, true)
+                FormatResponse(false, 500, {}, err.message, true)
             );
         });
     },
@@ -34,7 +34,7 @@ module.exports = {
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, "", 'User not found', true)
+                FormatResponse(false, 404, {}, 'User not found', true)
             );
         });
     },
@@ -48,7 +48,7 @@ module.exports = {
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, "", 'User not found', true)
+                FormatResponse(false, 404, {}, 'User not found', true)
             );
         });
     },
@@ -64,7 +64,7 @@ module.exports = {
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, '', 'User not found', true)
+                FormatResponse(false, 404, {}, 'User not found', true)
             );
         });
     },
@@ -78,7 +78,7 @@ module.exports = {
             );
         }).catch(err => {
             res.status(404).json(
-                FormatResponse(false, 404, '', 'User not found', true)
+                FormatResponse(false, 404, {}, 'User not found', true)
             );
         });
     },
@@ -90,7 +90,7 @@ module.exports = {
 
         if (oldPwd !== confirmOldPwd) {
             res.status(404).json(
-                FormatResponse(false, 404, '', 'Konfirmasi kata sandi tidak sama', true)
+                FormatResponse(false, 404, {}, 'Konfirmasi kata sandi tidak sama', true)
             );
         } else {
             User.findById(id).orFail().then(result => {
@@ -105,18 +105,18 @@ module.exports = {
                             );
                         }).catch(err => {
                             res.status(404).json(
-                                FormatResponse(false, 404, '', 'User tidak ditemukan', true)
+                                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
                             );
                         });
                     });
                 } else {
                     res.status(404).json(
-                        FormatResponse(false, 404, '', 'Kata sandi lama salah', true)
+                        FormatResponse(false, 404, {}, 'Kata sandi lama salah', true)
                     );
                 }
             }).catch(err => {
                 res.status(404).json(
-                    FormatResponse(false, 404, '', 'User tidak ditemukan', true)
+                    FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
                 );
             });
         }

@@ -18,7 +18,7 @@ module.exports = {
 
         if (pwd !== confirmPwd) {
             res.status(200).json(
-                FormatResponse(true, 200, '', 'Konfirmasi kata sandi tidak sama', true)
+                FormatResponse(true, 200, {}, 'Konfirmasi kata sandi tidak sama', true)
             );
         } else {
             User.findOne({
@@ -41,22 +41,22 @@ module.exports = {
                             );
                         }).catch(err => {
                             res.status(200).json(
-                                FormatResponse(false, 200, "", `Pendaftaran tidak berhasil, ${err.message}`, true)
+                                FormatResponse(false, 200, {}, `Pendaftaran tidak berhasil, ${err.message}`, true)
                             );
                         });
                     }).catch(err => {
                         res.status(500).json(
-                            FormatResponse(false, 500, "", `Hashing pwd gagal, ${err.message}`, true)
+                            FormatResponse(false, 500, {}, `Hashing pwd gagal, ${err.message}`, true)
                         );
                     });
                 } else {
                     res.status(200).json(
-                        FormatResponse(true, 200, "", 'Pendaftaran tidak berhasil, data sudah tersedia', true)
+                        FormatResponse(true, 200, {}, 'Pendaftaran tidak berhasil, data sudah tersedia', true)
                     );
                 }
             }).catch(err => {
                 res.status(500).json(
-                    FormatResponse(false, 500, "", err.message, false)
+                    FormatResponse(false, 500, {}, err.message, false)
                 );
             });
         }
@@ -83,12 +83,12 @@ module.exports = {
                 }
             } else {
                 res.status(200).json(
-                    FormatResponse(true, 200, "", 'Anda tidak berhasil masuk, kata sandi salah', true)
+                    FormatResponse(true, 200, {}, 'Anda tidak berhasil masuk, kata sandi salah', true)
                 );
             }
         }).catch(err => {
             res.status(200).json(
-                FormatResponse(true, 200, "", 'Anda tidak berhasil masuk, NPM belum terdaftar', true)
+                FormatResponse(true, 200, {}, 'Anda tidak berhasil masuk, NPM belum terdaftar', true)
             );
         });
     }

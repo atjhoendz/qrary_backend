@@ -18,7 +18,7 @@ module.exports = {
             next();
         } catch (err) {
             res.status(401).json(
-                FormatResponse(false, 401, '', "Token invalid, silahkan login terlebih dahulu", true)
+                FormatResponse(false, 401, {}, "Token invalid, silahkan login terlebih dahulu", true)
             );
         }
     },
@@ -27,7 +27,7 @@ module.exports = {
             next();
         } else {
             res.status(401).json(
-                FormatResponse(false, 401, '', 'User unAuthorized, forbidden access', true)
+                FormatResponse(false, 401, {}, 'User unAuthorized, forbidden access', true)
             );
         }
     },
@@ -36,7 +36,7 @@ module.exports = {
             next();
         } else {
             res.status(404).json(
-                FormatResponse(false, 404, '', 'Request data kosong', true)
+                FormatResponse(false, 404, {}, 'Request data kosong', true)
             );
         }
     },
@@ -47,7 +47,7 @@ module.exports = {
                 next();
             } else {
                 res.status(200).json(
-                    FormatResponse(true, 200, '', 'NPM tidak valid', true)
+                    FormatResponse(true, 200, {}, 'NPM tidak valid', true)
                 );
             }
         });
