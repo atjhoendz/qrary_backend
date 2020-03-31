@@ -15,7 +15,9 @@ const BukuSchema = new Schema({
     deskripsi: String,
     penerbit: String,
     penulis: String,
-    kategori: String
+    kategori: Array,
+    penerjemah: String,
+    tanggalTerbit: String,
 });
 
 const Buku = mongoose.model("Buku", BukuSchema, "Buku");
