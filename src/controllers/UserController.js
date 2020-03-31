@@ -113,20 +113,6 @@ module.exports = {
             );
         });
     },
-    updateRole: (req, res) => {
-        let id = req.params.id;
-        User.findByIdAndUpdate(id, {
-            role: req.body.role
-        }).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Role user berhasil diperbarui', true)
-            );
-        }).catch(err => {
-            res.status(404).json(
-                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
-            );
-        });
-    },
     updatePassword: (req, res) => {
         let id = req.params.id;
         let oldPwd = req.body.oldPwd;

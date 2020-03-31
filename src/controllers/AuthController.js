@@ -18,7 +18,7 @@ module.exports = {
 
         if (pwd !== confirmPwd) {
             res.status(200).json(
-                FormatResponse(true, 200, '', 'Konfirmasi kata sandi tidak sama', true)
+                FormatResponse(true, 200, {}, 'Konfirmasi kata sandi tidak sama', true)
             );
         } else {
             User.findOne({
@@ -33,7 +33,6 @@ module.exports = {
                             npm: req.body.npm,
                             email: req.body.email,
                             pwd: hashed,
-                            role: req.body.role,
                             urlFoto: setUrlFoto(req.body.npm)
                         }).then(user => {
                             res.status(200).json(
