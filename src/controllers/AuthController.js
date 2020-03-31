@@ -18,7 +18,7 @@ module.exports = {
 
         if (pwd !== confirmPwd) {
             res.status(200).json(
-                FormatResponse(true, 200, {}, 'Konfirmasi kata sandi tidak sama', true)
+                FormatResponse(true, 200, '', 'Konfirmasi kata sandi tidak sama', true)
             );
         } else {
             User.findOne({
@@ -83,12 +83,12 @@ module.exports = {
                 }
             } else {
                 res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Anda tidak berhasil masuk, kata sandi salah', true)
+                    FormatResponse(true, 200, '', 'Anda tidak berhasil masuk, kata sandi salah', true)
                 );
             }
         }).catch(err => {
             res.status(200).json(
-                FormatResponse(true, 200, {}, 'Anda tidak berhasil masuk, NPM belum terdaftar', true)
+                FormatResponse(true, 200, '', 'Anda tidak berhasil masuk, NPM belum terdaftar', true)
             );
         });
     }
