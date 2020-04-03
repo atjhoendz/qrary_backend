@@ -1,9 +1,28 @@
 const mongoose = require('mongoose');
-const User = require('user');
 const Schema = mongoose.Schema;
 
+const UserSchema = new Schema({
+    nama: {
+        type: String,
+        required: true
+    },
+    npm: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    pwd: {
+        type: String,
+        required: true,
+    },
+    urlFoto: String
+});
+
 const PengunjungSchema = new Schema({
-    dataUser: User,
+    dataUser: UserSchema,
     waktuMasuk: {
         type: Date,
         required: true
