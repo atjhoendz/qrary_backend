@@ -10,7 +10,6 @@ module.exports = {
         Buku.find({
             isbn: req.body.isbn
         }).then(result => {
-            console.log(result);
             if (Object.keys(result).length == 0) {
                 Buku.create({
                     bahasa: req.body.bahasa,
