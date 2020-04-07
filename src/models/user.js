@@ -20,7 +20,8 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    urlFoto: String
+    urlFoto: String,
+    isConfirmed: Boolean
 });
 
 const User = mongoose.model("User", UserSchema, "User");

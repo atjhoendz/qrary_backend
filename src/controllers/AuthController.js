@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const speakeasy = require('speakeasy');
 const FormatResponse = require('../utils/formatResponse');
 const round = 10;
 
@@ -10,6 +12,49 @@ const setUrlFoto = (npm) => {
     let angkatan = `20${npm.substring(6, 8)}`;
     return `${prefixUrl + prodi}/${angkatan}/${npm}.JPG`;
 };
+
+const generateOTP = () => {
+    let secret = process.env.SECRET_OTP;
+    let token = speakeasy.totp({
+        secret: secret,
+        encoding: 'base32',
+        step: 230
+    });
+    return token;
+};
+
+const sendEmailOTP = (email, res) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: "keylogresut@gmail.com",
+            pass: "sayangkamu69"
+        }
+    });
+
+    let code = generateOTP();
+
+    let message = {
+        from: 'admin@qrary.app',
+        to: email,
+        subject: 'Qrary Verification Code',
+        text: `Verification Code : ${code}`
+    }
+
+    // Send Email
+
+    transporter.sendMail(message).then(info => {
+        res.status(200).json(
+            FormatResponse(true, 200, info, 'Kode OTP berhasil dikirim', true)
+        );
+    }).catch(err => {
+        res.status(500).json(
+            FormatResponse(false, 500, {}, err.message, true)
+        );
+    });
+}
 
 module.exports = {
     register: (req, res) => {
@@ -33,8 +78,10 @@ module.exports = {
                             npm: req.body.npm,
                             email: req.body.email,
                             pwd: hashed,
+                            isConfirmed: false,
                             urlFoto: setUrlFoto(req.body.npm)
                         }).then(user => {
+                            sendEmailOTP(req.body.email, res);
                             res.status(200).json(
                                 FormatResponse(true, 200, user, 'Pendaftaran berhasil', true)
                             );
@@ -90,5 +137,53 @@ module.exports = {
                 FormatResponse(true, 200, '', 'Anda tidak berhasil masuk, NPM belum terdaftar', true)
             );
         });
+    },
+    sendOTP: (req, res) => {
+        let emailto = req.body.email;
+        sendEmailOTP(emailto, res);
+    },
+    verifyOTP: (req, res) => {
+        let otp = req.body.otp;
+        let email = req.body.email;
+
+        let verify = speakeasy.totp.verify({
+            secret: process.env.SECRET_OTP,
+            encoding: 'base32',
+            token: otp,
+            step: 230
+        });
+
+        console.log(verify);
+
+        if (verify) {
+            User.updateOne({ email: email }, {
+                isConfirmed: true
+            }).then(result => {
+                if (result.n > 0) {
+                    if (result.nModified > 0) {
+                        res.status(200).json(
+                            FormatResponse(true, 200, result, 'Akun berhasil diaktifasi', true)
+                        );
+                    } else {
+                        res.status(200).json(
+                            FormatResponse(true, 200, {}, 'Akun sudah aktif tidak perlu diaktifasi kembali', true)
+                        );
+                    }
+                } else {
+                    res.status(200).json(
+                        FormatResponse(false, 200, {}, `Akun tidak ditemukan`, true)
+                    );
+                }
+            }).catch(err => {
+                res.status(500).json(
+                    FormatResponse(false, 500, {}, `Err: ${err.message}`, true)
+                );
+            })
+
+        } else {
+            res.status(200).json(
+                FormatResponse(false, 200, '', 'Kode OTP Salah!', true)
+            );
+        }
     }
 };
