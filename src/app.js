@@ -25,4 +25,6 @@ app.listen(process.env.PORT, () => {
 
 connectDB().then(() => {
     console.log('MongoDB connected successfuly...');
+}).catch(err => {
+    console.log(err.message);
 });
