@@ -46,13 +46,21 @@ const sendEmailOTP = (email, res) => {
     // Send Email
 
     transporter.sendMail(message).then(info => {
-        res.status(200).json(
-            FormatResponse(true, 200, info, 'Kode OTP berhasil dikirim', true)
-        );
+        if (res == null) {
+            console.log('Kode OTP berhasil dikirim');
+        } else {
+            res.status(200).json(
+                FormatResponse(true, 200, info, 'Kode OTP berhasil dikirim', true)
+            );
+        }
     }).catch(err => {
-        res.status(500).json(
-            FormatResponse(false, 500, {}, err.message, true)
-        );
+        if (res == null) {
+            console.log(`Sendmail error: ${err.message}`);
+        } else {
+            res.status(500).json(
+                FormatResponse(false, 500, {}, err.message, true)
+            );
+        }
     });
 }
 
@@ -81,7 +89,7 @@ module.exports = {
                             isConfirmed: false,
                             urlFoto: setUrlFoto(req.body.npm)
                         }).then(user => {
-                            sendEmailOTP(req.body.email, res);
+                            sendEmailOTP(req.body.email, null);
                             res.status(200).json(
                                 FormatResponse(true, 200, user, 'Pendaftaran berhasil', true)
                             );
@@ -152,8 +160,6 @@ module.exports = {
             token: otp,
             step: 230
         });
-
-        console.log(verify);
 
         if (verify) {
             User.updateOne({ email: email }, {
