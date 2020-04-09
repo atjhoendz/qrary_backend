@@ -15,6 +15,7 @@ services:
       - MONGODB_URI=mongodb://mongo/qrary
     networks:
       - express_mongo-network
+    env_file: .env
   mongo:
     container_name: mongo
     restart: always
