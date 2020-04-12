@@ -121,18 +121,24 @@ module.exports = {
         }).orFail().then(user => {
             const isValid = bcrypt.compareSync(req.body.pwd, user.pwd);
             if (isValid) {
-                data = {
-                    nama: user.nama,
-                    npm: user.npm,
-                    email: user.email,
-                    urlFoto: user.urlFoto,
-                    role: user.role,
-                    loggedin: true
-                };
-                const token = jwt.sign(data, process.env.SECRET_KEY);
-                if (token) {
+
+                if (user.isConfirmed) {
+                    data = {
+                        nama: user.nama,
+                        npm: user.npm,
+                        email: user.email,
+                        urlFoto: user.urlFoto,
+                        role: user.role
+                    };
+                    const token = jwt.sign(data, process.env.SECRET_KEY);
+                    if (token) {
+                        res.status(200).json(
+                            FormatResponse(true, 200, token, 'Anda berhasil masuk', true)
+                        );
+                    }
+                } else {
                     res.status(200).json(
-                        FormatResponse(true, 200, token, 'Anda berhasil masuk', true)
+                        FormatResponse(true, 200, '', 'Akun belum diaktifasi silahkan aktifasi terlebih dahulu', true)
                     );
                 }
             } else {
