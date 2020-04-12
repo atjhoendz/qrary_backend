@@ -4,6 +4,9 @@ const auth = require('./auth');
 const user = require('./user');
 const buku = require('./buku');
 const pengunjung = require('./pengunjung');
+const tempPeminjaman = require('./tempPeminjaman');
+const peminjaman = require('./peminjaman');
+
 const FormatResponse = require('../utils/formatResponse');
 const { isAuth, isAuthorized, isContainReqData } = require('../middlewares/auth');
 
@@ -17,5 +20,7 @@ router.use('/auth', isContainReqData, auth);
 router.use('/user', isAuth, isAuthorized, user);
 router.use('/buku', isAuth, buku);
 router.use('/pengunjung', isAuth, isAuthorized, pengunjung);
+router.use('/temp/pinjam', isAuth, tempPeminjaman);
+router.use('/peminjaman', isAuth, peminjaman);
 
 module.exports = router;
