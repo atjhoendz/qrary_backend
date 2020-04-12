@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const urlExist = require('url-exists');
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 
 const setUrlFoto = (npm) => {
     let prefixUrl = "https://media.unpad.ac.id/photo/mahasiswa/";
@@ -17,27 +17,21 @@ module.exports = {
             req.user = decoded;
             next();
         } catch (err) {
-            res.status(401).json(
-                FormatResponse(false, 401, {}, "Token invalid, silahkan login terlebih dahulu", true)
-            );
+            sendResponse(res, false, 401, {}, "Token invalid, silahkan login terlebih dahulu", true);
         }
     },
     isAuthorized: (req, res, next) => {
         if (req.user.role == 'admin') {
             next();
         } else {
-            res.status(401).json(
-                FormatResponse(false, 401, {}, 'User unAuthorized, forbidden access', true)
-            );
+            sendResponse(res, false, 401, {}, 'User unAuthorized, forbidden access', true);
         }
     },
     isContainReqData: (req, res, next) => {
         if (Object.keys(req.body).length !== 0) {
             next();
         } else {
-            res.status(404).json(
-                FormatResponse(false, 404, {}, 'Request data kosong', true)
-            );
+            sendResponse(res, false, 404, {}, 'Request data kosong', true);
         }
     },
     isValidNPM: (req, res, next) => {
@@ -46,9 +40,7 @@ module.exports = {
             if (exist) {
                 next();
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'NPM tidak valid', true)
-                );
+                sendResponse(res, true, 200, {}, 'NPM tidak valid', true);
             }
         });
     },
@@ -57,9 +49,7 @@ module.exports = {
         let limit = Number(req.params.limit);
 
         if (isNaN(page) || isNaN(limit)) {
-            res.status(200).json(
-                FormatResponse(true, 200, {}, 'Page dan limit harus angka', true)
-            );
+            sendResponse(res, true, 200, {}, 'Page dan limit harus angka', true);
         } else {
             req.params.page = page;
             req.params.limit = limit;
