@@ -1,8 +1,6 @@
 const Peminjaman = require('../models/peminjaman');
 const TempPeminjaman = require('../models/tempPeminjaman');
-const User = require('../models/user');
-const Buku = require('../models/peminjaman');
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 
 module.exports = {
     saveFromTemp: (req, res) => {
@@ -22,44 +20,28 @@ module.exports = {
                 Peminjaman.create(data).then(resultCreate => {
                     TempPeminjaman.findByIdAndDelete(idTemp).then(resultDelete => {
                         if (resultDelete) {
-                            res.status(200).json(
-                                FormatResponse(true, 200, resultCreate, 'Peminjaman berhasil', true)
-                            );
+                            sendResponse(res, true, 200, resultCreate, 'Peminjaman berhasil', true);
                         } else {
-                            res.status(200).json(
-                                FormatResponse(true, 200, {}, 'Data temp tidak ditemukan', true)
-                            );
+                            sendResponse(res, true, 200, {}, 'Data temp tidak ditemukan', true);
                         }
                     }).catch(err => {
-                        res.status(500).json(
-                            FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                        );
+                        sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                     });
                 }).catch(err => {
-                    res.status(500).json(
-                        FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                    );
+                    sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                 });
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Data temp tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'Data temp tidak ditemukan', true);
             }
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
     getAll: (req, res) => {
         Peminjaman.find({}).then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan semua data Peminjaman sukses', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan semua data Peminjaman sukses', true);
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
     getPaginate: (req, res) => {
@@ -92,19 +74,13 @@ module.exports = {
             }
 
             if (Object.keys(newData).length > 0) {
-                res.status(200).json(
-                    FormatResponse(true, 200, newData, 'Mendapatkan data Peminjaman berhalaman berhasil', isLast)
-                );
+                sendResponse(res, true, 200, newData, 'Mendapatkan data Peminjaman berhalaman berhasil', isLast);
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Data tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'Data tidak ditemukan', true);
             }
 
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
     find: (req, res) => {
@@ -114,13 +90,9 @@ module.exports = {
         query[key] = new RegExp(value, 'i');
 
         Peminjaman.find(query).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan data Peminjaman berhasil', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan data Peminjaman berhasil', true);
         }).catch(err => {
-            res.status(200).json(
-                FormatResponse(true, 200, {}, 'Peminjaman tidak ditemukan', true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
 };

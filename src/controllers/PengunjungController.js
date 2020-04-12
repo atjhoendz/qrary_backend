@@ -1,7 +1,6 @@
 const Pengunjung = require('../models/pengunjung');
 const User = require('../models/user');
-const TempPeminjaman = require('../models/tempPeminjaman');
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 
 module.exports = {
     add: (req, res) => {
@@ -21,34 +20,22 @@ module.exports = {
                         dataUser: result,
                         waktuMasuk: resultCreate.waktuMasuk
                     }
-                    res.status(201).json(
-                        FormatResponse(true, 201, data, 'Pengunjung berhasil ditambahkan', true)
-                    );
+                    sendResponse(res, true, 201, data, 'Pengunjung berhasil ditambahkan', true);
                 }).catch(err => {
-                    res.status(200).json(
-                        FormatResponse(false, 200, {}, `Error: ${err.message}`, true)
-                    );
+                    sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
                 });
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'User tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
             }
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, `Error: ${err.message}`, true)
-            );
+            sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
         });
     },
     getAll: (req, res) => {
         Pengunjung.find({}).then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan semua data pengunjung sukses', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan semua data pengunjung sukses', true);
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
         });
     },
     getPaginate: (req, res) => {
@@ -81,19 +68,13 @@ module.exports = {
             }
 
             if (Object.keys(newData).length > 0) {
-                res.status(200).json(
-                    FormatResponse(true, 200, newData, 'Mendapatkan data pengunjung berhalaman berhasil', isLast)
-                );
+                sendResponse(res, true, 200, newData, 'Mendapatkan data pengunjung berhalaman berhasil', isLast);
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Data tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'Data tidak ditemukan', true);
             }
 
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
         });
     },
     find: (req, res) => {
@@ -103,13 +84,9 @@ module.exports = {
         query[key] = new RegExp(value, 'i');
 
         Pengunjung.find(query).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan data pengunjung berhasil', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan data pengunjung berhasil', true);
         }).catch(err => {
-            res.status(200).json(
-                FormatResponse(true, 200, {}, 'Pengunjung tidak ditemukan', true)
-            );
+            sendResponse(res, true, 200, {}, 'Pengunjung tidak ditemukan', true);
         });
     },
     deletePengunjung: (req, res) => {
@@ -117,13 +94,9 @@ module.exports = {
         Pengunjung.deleteOne({
             _id: id
         }).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Pengunjung berhasil dihapus', true)
-            );
+            sendResponse(res, true, 200, result, 'Pengunjung berhasil dihapus', true);
         }).catch(err => {
-            res.status(200).json(
-                FormatResponse(true, 200, {}, 'Pengunjung tidak ditemukan', true)
-            );
+            sendResponse(res, true, 200, {}, 'Pengunjung tidak ditemukan', true);
         });
     }
 };

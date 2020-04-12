@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 const round = 10;
 
 const setUrlFoto = (npm) => {
@@ -49,17 +49,13 @@ const sendEmailOTP = (email, res) => {
         if (res == null) {
             console.log('Kode OTP berhasil dikirim');
         } else {
-            res.status(200).json(
-                FormatResponse(true, 200, info, 'Kode OTP berhasil dikirim', true)
-            );
+            sendResponse(res, true, 200, info, 'Kode OTP berhasil dikirim', true);
         }
     }).catch(err => {
         if (res == null) {
             console.log(`Sendmail error: ${err.message}`);
         } else {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
         }
     });
 }
@@ -70,9 +66,7 @@ module.exports = {
         let confirmPwd = req.body.confirmPwd;
 
         if (pwd !== confirmPwd) {
-            res.status(200).json(
-                FormatResponse(true, 200, {}, 'Konfirmasi kata sandi tidak sama', true)
-            );
+            sendResponse(res, true, 200, {}, 'Konfirmasi kata sandi tidak sama', true);
         } else {
             User.findOne({
                 $or: [
@@ -90,28 +84,18 @@ module.exports = {
                             urlFoto: setUrlFoto(req.body.npm)
                         }).then(user => {
                             // sendEmailOTP(req.body.email, null);
-                            res.status(200).json(
-                                FormatResponse(true, 200, user, 'Pendaftaran berhasil', true)
-                            );
+                            sendResponse(res, true, 200, user, 'Pendaftaran berhasil', true);
                         }).catch(err => {
-                            res.status(200).json(
-                                FormatResponse(false, 200, {}, `Pendaftaran tidak berhasil, ${err.message}`, true)
-                            );
+                            sendResponse(res, false, 200, {}, `Pendaftaran tidak berhasil, ${err.message}`, true);
                         });
                     }).catch(err => {
-                        res.status(500).json(
-                            FormatResponse(false, 500, {}, `Hashing pwd gagal, ${err.message}`, true)
-                        );
+                        sendResponse(res, false, 500, {}, `Hashing pwd gagal, ${err.message}`, true);
                     });
                 } else {
-                    res.status(200).json(
-                        FormatResponse(true, 200, {}, 'Pendaftaran tidak berhasil, data sudah tersedia', true)
-                    );
+                    sendResponse(res, true, 200, {}, 'Pendaftaran tidak berhasil, data sudah tersedia', true);
                 }
             }).catch(err => {
-                res.status(500).json(
-                    FormatResponse(false, 500, {}, err.message, false)
-                );
+                sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
             });
         }
     },
@@ -132,24 +116,16 @@ module.exports = {
                     };
                     const token = jwt.sign(data, process.env.SECRET_KEY);
                     if (token) {
-                        res.status(200).json(
-                            FormatResponse(true, 200, token, 'Anda berhasil masuk', true)
-                        );
+                        sendResponse(res, true, 200, token, 'Anda berhasil masuk', true);
                     }
                 } else {
-                    res.status(200).json(
-                        FormatResponse(true, 200, '', 'Akun belum diaktifasi silahkan aktifasi terlebih dahulu', true)
-                    );
+                    sendResponse(res, true, 200, '', 'Akun belum diaktifasi silahkan aktifasi terlebih dahulu', true);
                 }
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, '', 'Anda tidak berhasil masuk, kata sandi salah', true)
-                );
+                sendResponse(res, true, 200, '', 'Anda tidak berhasil masuk, kata sandi salah', true);
             }
         }).catch(err => {
-            res.status(200).json(
-                FormatResponse(true, 200, '', 'Anda tidak berhasil masuk, NPM belum terdaftar', true)
-            );
+            sendResponse(res, true, 200, '', 'Anda tidak berhasil masuk, NPM belum terdaftar', true);
         });
     },
     sendOTP: (req, res) => {
@@ -173,29 +149,19 @@ module.exports = {
             }).then(result => {
                 if (result.n > 0) {
                     if (result.nModified > 0) {
-                        res.status(200).json(
-                            FormatResponse(true, 200, result, 'Akun berhasil diaktifasi', true)
-                        );
+                        sendResponse(res, true, 200, result, 'Akun berhasil diaktifasi', true);
                     } else {
-                        res.status(200).json(
-                            FormatResponse(true, 200, {}, 'Akun sudah aktif tidak perlu diaktifasi kembali', true)
-                        );
+                        sendResponse(res, true, 200, {}, 'Akun sudah aktif tidak perlu diaktifasi kembali', true);
                     }
                 } else {
-                    res.status(200).json(
-                        FormatResponse(false, 200, {}, `Akun tidak ditemukan`, true)
-                    );
+                    sendResponse(res, false, 200, {}, `Akun tidak ditemukan`, true);
                 }
             }).catch(err => {
-                res.status(500).json(
-                    FormatResponse(false, 500, {}, `Err: ${err.message}`, true)
-                );
+                sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
             })
 
         } else {
-            res.status(200).json(
-                FormatResponse(false, 200, '', 'Kode OTP Salah!', true)
-            );
+            sendResponse(res, false, 200, '', 'Kode OTP Salah!', true);
         }
     }
 };

@@ -2,18 +2,14 @@ const TempPeminjaman = require('../models/tempPeminjaman');
 const Pengunjung = require('../models/pengunjung');
 const User = require('../models/user');
 const Buku = require('../models/buku');
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 
 module.exports = {
     getAllTempPinjam: (req, res) => {
         TempPeminjaman.find({}).then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan Data Temp pinjam berhasil', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan Data Temp pinjam berhasil', true);
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
     getPengunjungToTemp: (req, res) => {
@@ -39,44 +35,28 @@ module.exports = {
                                     }
                                 }).then(resultUpdateUser => {
                                     if (resultUpdateUser) {
-                                        res.status(200).json(
-                                            FormatResponse(true, 200, resultUpdateUser, 'Data pengunjung berhasil didapatkan', true)
-                                        );
+                                        sendResponse(res, true, 200, resultUpdateUser, 'Data pengunjung berhasil didapatkan', true);
                                     } else {
-                                        res.status(200).json(
-                                            FormatResponse(true, 200, {}, 'Data pengunjung tidak berhasil didapatkan', true)
-                                        );
+                                        sendResponse(res, true, 200, {}, 'Data pengunjung tidak berhasil didapatkan', true);
                                     }
                                 }).catch(err => {
-                                    res.status(500).json(
-                                        FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                                    );
+                                    sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                                 });
                             }
                         }).catch(err => {
-                            res.status(500).json(
-                                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                            );
+                            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                         });
                     } else {
-                        res.status(200).json(
-                            FormatResponse(true, 200, {}, 'NPM belum terdaftar sebagai pengunjung', true)
-                        );
+                        sendResponse(res, true, 200, {}, 'NPM belum terdaftar sebagai pengunjung', true);
                     }
                 }).catch(err => {
-                    res.status(500).json(
-                        FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                    );
+                    sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                 });
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, '', 'Npm belum terdaftar sebagai user', true)
-                );
+                sendResponse(res, true, 200, '', 'Npm belum terdaftar sebagai user', true);
             }
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         })
     },
     getBukuToTemp: (req, res) => {
@@ -97,9 +77,7 @@ module.exports = {
                         if (getBuku) {
                             for (let i = 0; i < getBuku.length; i++) {
                                 if (getBuku[i] == isbn) {
-                                    return res.status(200).json(
-                                        FormatResponse(true, 200, '', 'Buku sudah ditambahkan', true)
-                                    );
+                                    sendResponse(res, true, 200, '', 'Buku sudah ditambahkan', true);
                                 }
                             }
                         }
@@ -116,38 +94,24 @@ module.exports = {
                             }
                         }).then(resultUpdateTemp => {
                             if (resultUpdateTemp) {
-                                res.status(200).json(
-                                    FormatResponse(true, 200, resultBuku, 'Buku berhasil ditambahkan', true)
-                                );
+                                sendResponse(res, true, 200, resultBuku, 'Buku berhasil ditambahkan', true);
                             } else {
-                                res.status(200).json(
-                                    FormatResponse(true, 200, {}, 'User pada temp tidak ditemukan', true)
-                                );
+                                sendResponse(res, true, 200, {}, 'User pada temp tidak ditemukan', true);
                             }
                         }).catch(err => {
-                            res.status(500).json(
-                                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                            );
+                            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                         })
                     } else {
-                        res.status(200).json(
-                            FormatResponse(true, 200, {}, 'User pada temp tidak ditemukan', true)
-                        );
+                        sendResponse(res, true, 200, {}, 'User pada temp tidak ditemukan', true);
                     }
                 }).catch(err => {
-                    res.status(500).json(
-                        FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                    );
+                    sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                 });
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Buku tidak ditemukan, silahkan daftarkan buku terlebih dahulu', true)
-                );
+                sendResponse(res, true, 200, {}, 'Buku tidak ditemukan, silahkan daftarkan buku terlebih dahulu', true);
             }
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-            );
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
     deleteBukuAtTemp: (req, res) => {
@@ -169,9 +133,7 @@ module.exports = {
                         }
                     }
                 } else {
-                    res.status(200).json(
-                        FormatResponse(true, 200, {}, 'List buku kosong tidak ada yang dihapus', true)
-                    );
+                    sendResponse(res, true, 200, {}, 'List buku kosong tidak ada yang dihapus', true);
                 }
 
                 if (tersedia) {
@@ -181,34 +143,22 @@ module.exports = {
                         }
                     }).then(resultUpdate => {
                         if (resultUpdate) {
-                            res.status(200).json(
-                                FormatResponse(true, 200, resultUpdate, 'Buku berhasil dihapus', true)
-                            );
+                            sendResponse(res, true, 200, resultUpdate, 'Buku berhasil dihapus', true);
                         } else {
-                            res.status(200).json(
-                                FormatResponse(true, 200, {}, 'Data temp pinjam tidak ditemukan', true)
-                            );
+                            sendResponse(res, true, 200, {}, 'Data temp pinjam tidak ditemukan', true);
                         }
                     }).catch(err => {
-                        res.status(500).json(
-                            FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-                        );
+                        sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                     });
                 } else {
-                    res.status(200).json(
-                        FormatResponse(true, 200, {}, 'Buku tidak ditemukan', true)
-                    );
+                    sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
                 }
 
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Data temp pinjam tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'Data temp pinjam tidak ditemukan', true);
             }
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-            )
+            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     }
 };

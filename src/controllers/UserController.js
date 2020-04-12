@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 const round = 10;
 
 const setUrlFoto = (npm) => {
@@ -13,13 +13,9 @@ const setUrlFoto = (npm) => {
 module.exports = {
     getAll: (req, res) => {
         User.find({}).then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan data semua user berhasil', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan data semua user berhasil', true);
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 500, {}, err.message, true);
         });
     },
     getPaginate: (req, res) => {
@@ -52,19 +48,13 @@ module.exports = {
             }
 
             if (Object.keys(newData).length > 0) {
-                res.status(200).json(
-                    FormatResponse(true, 200, newData, 'Mendapatkan data user berhalaman berhasil', isLast)
-                );
+                sendResponse(res, true, 200, newData, 'Mendapatkan data user berhalaman berhasil', isLast);
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'Data tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'Data tidak ditemukan', true);
             }
 
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, {}, err.message, true)
-            );
+            sendResponse(res, false, 500, {}, err.message, true);
         });
     },
     find: (req, res) => {
@@ -74,13 +64,9 @@ module.exports = {
         query[key] = new RegExp(value, 'i');
 
         User.find(query).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'Mendapatkan data user berhasil', true)
-            );
+            sendResponse(res, true, 200, result, 'Mendapatkan data user berhasil', true);
         }).catch(err => {
-            res.status(404).json(
-                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
-            );
+            sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
         });
     },
     deleteUser: (req, res) => {
@@ -88,13 +74,9 @@ module.exports = {
         User.deleteOne({
             _id: id
         }).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'User berhasil dihapus', true)
-            );
+            sendResponse(res, true, 200, result, 'User berhasil dihapus', true);
         }).catch(err => {
-            res.status(404).json(
-                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
-            );
+            sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
         });
     },
     update: (req, res) => {
@@ -104,13 +86,9 @@ module.exports = {
             npm: req.body.npm,
             urlFoto: setUrlFoto(req.body.npm)
         }).orFail().then(result => {
-            res.status(200).json(
-                FormatResponse(true, 200, result, 'User berhasil diperbarui', true)
-            );
+            sendResponse(res, true, 200, result, 'User berhasil diperbarui', true);
         }).catch(err => {
-            res.status(404).json(
-                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
-            );
+            sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
         });
     },
     updatePassword: (req, res) => {
@@ -120,9 +98,7 @@ module.exports = {
         let newPwd = req.body.newPwd;
 
         if (oldPwd !== confirmOldPwd) {
-            res.status(404).json(
-                FormatResponse(false, 404, {}, 'Konfirmasi kata sandi tidak sama', true)
-            );
+            sendResponse(res, true, 200, {}, 'Konfirmasi kata sandi tidak sama', true);
         } else {
             User.findById(id).orFail().then(result => {
                 let compare = bcrypt.compareSync(oldPwd, result.pwd);
@@ -131,24 +107,16 @@ module.exports = {
                         User.findByIdAndUpdate(id, {
                             pwd: hashed
                         }).orFail().then(result => {
-                            res.status(200).json(
-                                FormatResponse(true, 200, result, 'Kata sandi berhasil diperbarui', true)
-                            );
+                            sendResponse(res, true, 200, result, 'Kata sandi berhasil diperbarui', true);
                         }).catch(err => {
-                            res.status(404).json(
-                                FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
-                            );
+                            sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
                         });
                     });
                 } else {
-                    res.status(404).json(
-                        FormatResponse(false, 404, {}, 'Kata sandi lama salah', true)
-                    );
+                    sendResponse(res, true, 200, {}, 'Kata sandi lama salah', true);
                 }
             }).catch(err => {
-                res.status(404).json(
-                    FormatResponse(false, 404, {}, 'User tidak ditemukan', true)
-                );
+                sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
             });
         }
     },
@@ -164,18 +132,12 @@ module.exports = {
             }
         }).then(result => {
             if (result) {
-                res.status(200).json(
-                    FormatResponse(true, 200, result, 'Set mode pinjam berhasil', true)
-                );
+                sendResponse(res, true, 200, result, 'Set mode pinjam berhasil', true);
             } else {
-                res.status(200).json(
-                    FormatResponse(true, 200, {}, 'NPM tidak ditemukan, Set mode pinjam gagal', true)
-                );
+                sendResponse(res, true, 200, {}, 'NPM tidak ditemukan, Set mode pinjam gagal', true);
             }
         }).catch(err => {
-            res.status(500).json(
-                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
-            );
+            sendResponse(res, false, 500, {}, err.message, true);
         });
     }
 };
