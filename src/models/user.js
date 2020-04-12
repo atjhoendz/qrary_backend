@@ -21,7 +21,8 @@ const UserSchema = new Schema({
         required: true,
     },
     urlFoto: String,
-    isConfirmed: Boolean
+    isConfirmed: Boolean,
+    isModePinjam: Boolean
 });
 
 const User = mongoose.model("User", UserSchema, "User");

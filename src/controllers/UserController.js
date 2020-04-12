@@ -151,5 +151,31 @@ module.exports = {
                 );
             });
         }
+    },
+    setModePinjam: (req, res) => {
+        let npm = req.body.npm;
+        let modePinjam = req.body.modepinjam;
+
+        User.findOneAndUpdate({
+            npm: npm
+        }, {
+            $set: {
+                isModePinjam: modePinjam
+            }
+        }).then(result => {
+            if (result) {
+                res.status(200).json(
+                    FormatResponse(true, 200, result, 'Set mode pinjam berhasil', true)
+                );
+            } else {
+                res.status(200).json(
+                    FormatResponse(true, 200, {}, 'NPM tidak ditemukan, Set mode pinjam gagal', true)
+                );
+            }
+        }).catch(err => {
+            res.status(500).json(
+                FormatResponse(false, 500, '', `Error: ${err.message}`, true)
+            );
+        });
     }
 };
