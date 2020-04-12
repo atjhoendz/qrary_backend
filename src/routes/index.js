@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
 const auth = require('./auth');
 const user = require('./user');
 const buku = require('./buku');
 const pengunjung = require('./pengunjung');
 const tempPeminjaman = require('./tempPeminjaman');
 const peminjaman = require('./peminjaman');
+const historyPeminjaman = require('./historyPeminjaman');
 
 const FormatResponse = require('../utils/formatResponse');
 const { isAuth, isAuthorized, isContainReqData } = require('../middlewares/auth');
@@ -22,5 +24,6 @@ router.use('/buku', isAuth, buku);
 router.use('/pengunjung', isAuth, isAuthorized, pengunjung);
 router.use('/temp/pinjam', isAuth, tempPeminjaman);
 router.use('/peminjaman', isAuth, peminjaman);
+router.use('/historypeminjaman', isAuth, historyPeminjaman);
 
 module.exports = router;

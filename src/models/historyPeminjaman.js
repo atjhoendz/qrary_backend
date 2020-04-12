@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
-const User = require('user');
-const Buku = require('buku');
 const Schema = mongoose.Schema;
 
 const HistoryPeminjamanSchema = new Schema({
-    dataUser: User,
-    dataBuku: Buku,
+    idUser: {
+        type: String,
+        required: true
+    },
+    isbnBuku: {
+        type: Array,
+        required: true
+    },
     tanggalMeminjam: {
         type: Date,
         required: true
