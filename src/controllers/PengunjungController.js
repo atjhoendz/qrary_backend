@@ -1,5 +1,6 @@
 const Pengunjung = require('../models/pengunjung');
 const User = require('../models/user');
+const TempPeminjaman = require('../models/tempPeminjaman');
 const FormatResponse = require('../utils/formatResponse');
 
 module.exports = {
@@ -7,24 +8,21 @@ module.exports = {
         let npm = req.body.npm;
         let waktuMasuk = req.body.waktuMasuk;
 
-        User.find({
+        User.findOne({
             npm: npm
         }).then(result => {
-            if (Object.keys(result).length != 0) {
-                let user = {
-                    _id: result[0]._id,
-                    nama: result[0].nama,
-                    npm: result[0].npm,
-                    email: result[0].email,
-                    pwd: result[0].pwd,
-                    urlFoto: result[0].urlFoto
-                };
+            if (result) {
                 Pengunjung.create({
-                    dataUser: user,
+                    idUser: result._id,
                     waktuMasuk: waktuMasuk
-                }).then(result => {
+                }).then(resultCreate => {
+                    let data = {
+                        _id: resultCreate._id,
+                        dataUser: result,
+                        waktuMasuk: resultCreate.waktuMasuk
+                    }
                     res.status(201).json(
-                        FormatResponse(true, 201, result, 'Pengunjung berhasil ditambahkan', true)
+                        FormatResponse(true, 201, data, 'Pengunjung berhasil ditambahkan', true)
                     );
                 }).catch(err => {
                     res.status(200).json(
