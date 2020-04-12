@@ -9,13 +9,11 @@ const tempPeminjaman = require('./tempPeminjaman');
 const peminjaman = require('./peminjaman');
 const historyPeminjaman = require('./historyPeminjaman');
 
-const FormatResponse = require('../utils/formatResponse');
+const { sendResponse } = require('../utils/formatResponse');
 const { isAuth, isAuthorized, isContainReqData } = require('../middlewares/auth');
 
 router.get('/', (req, res) => {
-    res.status(200).json(
-        FormatResponse(true, 200, {}, 'Qrary API is Running', true)
-    );
+    sendResponse(res, true, 200, {}, 'Qrary API is Running', true);
 });
 
 router.use('/auth', isContainReqData, auth);
