@@ -89,7 +89,7 @@ module.exports = {
                             isConfirmed: false,
                             urlFoto: setUrlFoto(req.body.npm)
                         }).then(user => {
-                            sendEmailOTP(req.body.email, null);
+                            // sendEmailOTP(req.body.email, null);
                             res.status(200).json(
                                 FormatResponse(true, 200, user, 'Pendaftaran berhasil', true)
                             );
