@@ -24,20 +24,21 @@ const generateOTP = () => {
 };
 
 const sendEmailOTP = (email, res) => {
+
     let transporter = nodemailer.createTransport({
-        host: process.env.MAILGUN_SMTP,
-        port: process.env.MAILGUN_PORT,
-        secure: false,
+        host: process.env.EMAIL_SMTP,
+        port: process.env.EMAIL_PORT,
+        secure: true,
         auth: {
-            user: process.env.MAILGUN_USERNAME,
-            pass: process.env.MAILGUN_PASSWORD
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD
         }
     });
 
     let code = generateOTP();
 
     let message = {
-        from: 'admin@qrary.app',
+        from: 'qrary@himatif.org',
         to: email,
         subject: 'Qrary Verification Code',
         text: `Verification Code : ${code}`
