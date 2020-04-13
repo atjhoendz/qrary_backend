@@ -120,7 +120,7 @@ module.exports = {
                         sendResponse(res, true, 200, token, 'Anda berhasil masuk', true);
                     }
                 } else {
-                    sendResponse(res, true, 200, '', 'Akun belum diaktifasi silahkan aktifasi terlebih dahulu', true);
+                    sendResponse(res, true, 200, '', `Akun dengan email ${user.email} belum diaktifasi silahkan aktifasi terlebih dahulu`, true);
                 }
             } else {
                 sendResponse(res, true, 200, '', 'Anda tidak berhasil masuk, kata sandi salah', true);
@@ -162,7 +162,7 @@ module.exports = {
             })
 
         } else {
-            sendResponse(res, false, 200, '', 'Kode OTP Salah!', true);
+            sendResponse(res, false, 200, {}, 'Kode OTP Salah!', true);
         }
     }
 };
