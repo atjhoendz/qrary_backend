@@ -25,12 +25,12 @@ const generateOTP = () => {
 
 const sendEmailOTP = (email, res) => {
     let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
+        host: process.env.MAILGUN_SMTP,
+        port: process.env.MAILGUN_PORT,
         secure: false,
         auth: {
-            user: "keylogresut@gmail.com",
-            pass: "sayangkamu69"
+            user: process.env.MAILGUN_USERNAME,
+            pass: process.env.MAILGUN_PASSWORD
         }
     });
 
