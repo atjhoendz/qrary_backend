@@ -20,6 +20,7 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
+    role: String,
     urlFoto: String,
     isConfirmed: Boolean,
     isModePinjam: Boolean

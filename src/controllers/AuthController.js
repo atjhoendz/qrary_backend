@@ -81,10 +81,10 @@ module.exports = {
                             npm: req.body.npm,
                             email: req.body.email,
                             pwd: hashed,
+                            role: "user",
                             isConfirmed: false,
                             urlFoto: setUrlFoto(req.body.npm)
                         }).then(user => {
-                            // sendEmailOTP(req.body.email, null);
                             sendResponse(res, true, 200, user, 'Pendaftaran berhasil', true);
                         }).catch(err => {
                             sendResponse(res, false, 200, {}, `Pendaftaran tidak berhasil, ${err.message}`, true);
@@ -117,7 +117,11 @@ module.exports = {
                     };
                     const token = jwt.sign(data, process.env.SECRET_KEY);
                     if (token) {
-                        sendResponse(res, true, 200, token, 'Anda berhasil masuk', true);
+                        let respData = {
+                            token: token,
+                            role: user.role
+                        }
+                        sendResponse(res, true, 200, respData, 'Anda berhasil masuk', true);
                     }
                 } else {
                     sendResponse(res, true, 200, '', `Akun dengan email ${user.email} belum diaktifasi silahkan aktifasi terlebih dahulu`, true);
