@@ -3,6 +3,7 @@ const router = express.Router();
 
 const auth = require('./auth');
 const user = require('./user');
+const admin = require('./admin');
 const buku = require('./buku');
 const pengunjung = require('./pengunjung');
 const tempPeminjaman = require('./tempPeminjaman');
@@ -23,5 +24,6 @@ router.use('/pengunjung', isAuth, isAuthorized, pengunjung);
 router.use('/temp/pinjam', isAuth, tempPeminjaman);
 router.use('/peminjaman', isAuth, peminjaman);
 router.use('/historypeminjaman', isAuth, historyPeminjaman);
+router.use('/admin', admin);
 
 module.exports = router;
