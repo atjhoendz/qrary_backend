@@ -17,6 +17,10 @@ const PeminjamanSchema = new Schema({
     tanggalKembali: {
         type: Date,
         required: true
+    },
+    isDikembalikan: {
+        type: Boolean,
+        default: false
     }
 });
 

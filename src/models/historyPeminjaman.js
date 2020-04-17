@@ -17,7 +17,8 @@ const HistoryPeminjamanSchema = new Schema({
     tanggalKembali: {
         type: Date,
         required: true
-    }
+    },
+    isDikembalikan: Boolean
 });
 
 const HistoryPeminjaman = mongoose.model("HistoryPeminjaman", HistoryPeminjamanSchema, "HistoryPeminjaman");

@@ -1,5 +1,6 @@
 const Peminjaman = require('../models/peminjaman');
 const TempPeminjaman = require('../models/tempPeminjaman');
+const HistoryPeminjaman = require('../models/historyPeminjaman');
 const { sendResponse } = require('../utils/formatResponse');
 
 module.exports = {
@@ -95,4 +96,29 @@ module.exports = {
             sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
     },
+    pengembalian: (req, res) => {
+        let idPeminjaman = req.body.idPeminjaman;
+
+        Peminjaman.findByIdAndDelete(idPeminjaman).then(dataPinjam => {
+            if (dataPinjam) {
+                HistoryPeminjaman.create({
+                    idUser: dataPinjam.idUser,
+                    isbnBuku: dataPinjam.isbnBuku,
+                    tanggalMeminjam: dataPinjam.tanggalMeminjam,
+                    tanggalKembali: dataPinjam.tanggalKembali,
+                    isDikembalikan: true
+                }).then(hasilAddHistory => {
+                    if (hasilAddHistory) {
+                        sendResponse(res, true, 200, hasilAddHistory, 'Buku berhasil dikembalikan', true);
+                    }
+                }).catch(err => {
+                    sendResponse(res, false, 500, '', `Error: ${err}`, true);
+                });
+            } else {
+                sendResponse(res, true, 200, {}, 'Data peminjaman tidak ditemukan', true);
+            }
+        }).catch(err => {
+            sendResponse(res, false, 500, '', `Error: ${err}`, true);
+        })
+    }
 };
