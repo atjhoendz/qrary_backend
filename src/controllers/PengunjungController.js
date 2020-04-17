@@ -32,10 +32,19 @@ module.exports = {
         });
     },
     getAll: (req, res) => {
-        Pengunjung.find({}).then(result => {
-            sendResponse(res, true, 200, result, 'Mendapatkan semua data pengunjung sukses', true);
-        }).catch(err => {
-            sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
+        Pengunjung.aggregate([{
+            $lookup: {
+                from: 'User',
+                localField: 'idUser',
+                foreignField: '_id',
+                as: 'User'
+            }
+        }]).exec((err, result) => {
+            if (err) {
+                sendResponse(res, true, 200, {}, `Error: ${err}`, true);
+            } else {
+                sendResponse(res, true, 200, result, true);
+            }
         });
     },
     getPaginate: (req, res) => {

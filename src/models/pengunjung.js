@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const PengunjungSchema = new Schema({
     idUser: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     waktuMasuk: {
