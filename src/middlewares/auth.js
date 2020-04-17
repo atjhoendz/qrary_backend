@@ -21,7 +21,7 @@ module.exports = {
         }
     },
     isAuthorized: (req, res, next) => {
-        if (req.user.role == 'admin') {
+        if (req.user.role == 'admin' || req.user.role == 'superadmin') {
             next();
         } else {
             sendResponse(res, false, 401, {}, 'User unAuthorized, forbidden access', true);
