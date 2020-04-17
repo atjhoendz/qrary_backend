@@ -17,7 +17,7 @@ module.exports = {
                 }).then(resultCreate => {
                     let data = {
                         _id: resultCreate._id,
-                        dataUser: result,
+                        User: result,
                         waktuMasuk: resultCreate.waktuMasuk
                     }
                     sendResponse(res, true, 201, data, 'Pengunjung berhasil ditambahkan', true);
