@@ -17,7 +17,7 @@ module.exports = {
                 }).then(resultCreate => {
                     let data = {
                         _id: resultCreate._id,
-                        User: result,
+                        user: result,
                         waktuMasuk: resultCreate.waktuMasuk
                     }
                     sendResponse(res, true, 201, data, 'Pengunjung berhasil ditambahkan', true);
@@ -33,13 +33,21 @@ module.exports = {
     },
     getAll: (req, res) => {
         Pengunjung.aggregate([{
-            $lookup: {
-                from: 'User',
-                localField: 'idUser',
-                foreignField: '_id',
-                as: 'User'
+                $lookup: {
+                    from: 'User',
+                    localField: 'idUser',
+                    foreignField: '_id',
+                    as: 'user',
+                }
+            },
+            { $unwind: '$user' },
+            {
+                $project: {
+                    waktuMasuk: 1,
+                    user: '$user'
+                }
             }
-        }]).exec((err, result) => {
+        ]).exec((err, result) => {
             if (err) {
                 sendResponse(res, true, 200, {}, `Error: ${err}`, true);
             } else {
@@ -51,39 +59,55 @@ module.exports = {
         let page = req.params.page;
         let limit = req.params.limit;
 
-        Pengunjung.find({}).orFail().then(result => {
-            let total = Object.keys(result).length;
-            let newData = [];
-            let show;
-            if (page == 1) {
-                show = 0;
-            } else {
-                show = ((page - 1) * limit);
-            }
-
-            for (let i = 0; i < total; i++) {
-                if (i >= show && i <= show + limit - 1) {
-                    newData.push(result[i]);
-                } else if (i > show + limit) {
-                    break;
+        Pengunjung.aggregate([{
+                $lookup: {
+                    from: 'User',
+                    localField: 'idUser',
+                    foreignField: '_id',
+                    as: 'user',
+                }
+            },
+            { $unwind: '$user' },
+            {
+                $project: {
+                    waktuMasuk: 1,
+                    user: '$user'
                 }
             }
-
-            let isLast;
-            if (total <= page * limit && total > (page - 1) * limit) {
-                isLast = true;
+        ]).exec((err, result) => {
+            if (err) {
+                sendResponse(res, true, 200, {}, `Error: ${err}`, true);
             } else {
-                isLast = false;
-            }
+                let total = Object.keys(result).length;
+                let newData = [];
+                let show;
+                if (page == 1) {
+                    show = 0;
+                } else {
+                    show = ((page - 1) * limit);
+                }
 
-            if (Object.keys(newData).length > 0) {
-                sendResponse(res, true, 200, newData, 'Mendapatkan data pengunjung berhalaman berhasil', isLast);
-            } else {
-                sendResponse(res, true, 200, {}, 'Data tidak ditemukan', true);
-            }
+                for (let i = 0; i < total; i++) {
+                    if (i >= show && i <= show + limit - 1) {
+                        newData.push(result[i]);
+                    } else if (i > show + limit) {
+                        break;
+                    }
+                }
 
-        }).catch(err => {
-            sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
+                let isLast;
+                if (total <= page * limit && total > (page - 1) * limit) {
+                    isLast = true;
+                } else {
+                    isLast = false;
+                }
+
+                if (Object.keys(newData).length > 0) {
+                    sendResponse(res, true, 200, newData, 'Mendapatkan data pengunjung berhalaman berhasil', isLast);
+                } else {
+                    sendResponse(res, true, 200, {}, 'Data tidak ditemukan', true);
+                }
+            }
         });
     },
     find: (req, res) => {
@@ -92,10 +116,36 @@ module.exports = {
         let query = {};
         query[key] = new RegExp(value, 'i');
 
-        Pengunjung.find(query).orFail().then(result => {
-            sendResponse(res, true, 200, result, 'Mendapatkan data pengunjung berhasil', true);
-        }).catch(err => {
-            sendResponse(res, true, 200, {}, 'Pengunjung tidak ditemukan', true);
+        Pengunjung.aggregate([{
+                $lookup: {
+                    from: 'User',
+                    localField: 'idUser',
+                    foreignField: '_id',
+                    as: 'user',
+                }
+            },
+            { $unwind: '$user' },
+            {
+                $project: {
+                    waktuMasuk: 1,
+                    user: '$user'
+                }
+            }
+        ]).exec((err, results) => {
+            if (err) {
+                sendResponse(res, false, 500, '', `Error: ${err}`, true);
+            } else {
+
+                let dataUser = results.filter(result => {
+                    return result.user[key].match(query[key]);
+                });
+
+                if (dataUser.length > 0) {
+                    sendResponse(res, true, 200, dataUser, 'Mendapatkan data pengunjung berhasil', true);
+                } else {
+                    sendResponse(res, true, 200, {}, 'Pengunjung tidak ditemukan', true);
+                }
+            }
         });
     },
     deletePengunjung: (req, res) => {
