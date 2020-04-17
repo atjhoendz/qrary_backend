@@ -124,13 +124,13 @@ module.exports = {
                         sendResponse(res, true, 200, respData, 'Anda berhasil masuk', true);
                     }
                 } else {
-                    sendResponse(res, true, 200, '', `Akun dengan email ${user.email} belum diaktifasi silahkan aktifasi terlebih dahulu`, true);
+                    sendResponse(res, true, 200, {}, `Akun dengan email ${user.email} belum diaktifasi silahkan aktifasi terlebih dahulu`, true);
                 }
             } else {
-                sendResponse(res, true, 200, '', 'Anda tidak berhasil masuk, kata sandi salah', true);
+                sendResponse(res, true, 200, {}, 'Anda tidak berhasil masuk, kata sandi salah', true);
             }
         }).catch(err => {
-            sendResponse(res, true, 200, '', 'Anda tidak berhasil masuk, NPM belum terdaftar', true);
+            sendResponse(res, true, 200, {}, 'Anda tidak berhasil masuk, NPM belum terdaftar', true);
         });
     },
     sendOTP: (req, res) => {
