@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { getAll, getPaginate, find, deleteUser, update, updatePassword, setModePinjam } = require('../controllers/UserController');
-const { isContainReqData, isPageaNumber } = require('../middlewares/auth');
+const { isContainReqData, isPageaNumber, isAuthorized } = require('../middlewares/auth');
 
-router.get('/getAll', getAll);
-router.get('/page/:page/limit/:limit', isPageaNumber, getPaginate);
+router.get('/getAll', isAuthorized, getAll);
+router.get('/page/:page/limit/:limit', isPageaNumber, isAuthorized, getPaginate);
 router.get('/find/:key/:value', find);
-router.delete('/delete/:id', deleteUser);
-router.put('/update/:id', isContainReqData, update);
-router.put('/update/pwd/:id', isContainReqData, updatePassword);
-router.post('/setmodepinjam', isContainReqData, setModePinjam);
+router.delete('/delete/:id', isAuthorized, deleteUser);
+router.put('/update/:id', isAuthorized, isContainReqData, update);
+router.put('/update/pwd/:id', isAuthorized, isContainReqData, updatePassword);
+router.post('/setmodepinjam', isAuthorized, isContainReqData, setModePinjam);
 
 module.exports = router;
