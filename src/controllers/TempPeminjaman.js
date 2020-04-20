@@ -3,6 +3,7 @@ const Pengunjung = require('../models/pengunjung');
 const User = require('../models/user');
 const Buku = require('../models/buku');
 const { sendResponse } = require('../utils/formatResponse');
+const mongoose = require('mongoose');
 
 module.exports = {
     getAllTempPinjam: (req, res) => {
@@ -176,6 +177,42 @@ module.exports = {
             }
         }).catch(err => {
             sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+        });
+    },
+    find: (req, res) => {
+
+        let id = req.params.id;
+
+        TempPeminjaman.aggregate([{
+                $lookup: {
+                    from: 'Buku',
+                    localField: 'isbnBuku',
+                    foreignField: 'isbn',
+                    as: 'buku',
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    idUser: 1,
+                    buku: '$buku'
+                }
+            },
+            {
+                $match: {
+                    _id: mongoose.Types.ObjectId(id)
+                }
+            }
+        ]).exec((err, results) => {
+            if (err) {
+                sendResponse(res, false, 500, '', `Error: ${err}`, true);
+            } else {
+                if (results.length > 0) {
+                    sendResponse(res, true, 200, results, 'Mendapatkan data pengunjung berhasil', true);
+                } else {
+                    sendResponse(res, true, 200, results, 'Data Temp Pinjam tidak ditemukan', true);
+                }
+            }
         });
     }
 };
