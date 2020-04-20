@@ -6,8 +6,9 @@ const { sendResponse } = require('../utils/formatResponse');
 
 module.exports = {
     getAllTempPinjam: (req, res) => {
-        TempPeminjaman.find({}).then(result => {
-            sendResponse(res, true, 200, result, 'Mendapatkan Data Temp pinjam berhasil', true);
+        TempPeminjaman.find({}).then(results => {
+            data = results;
+            sendResponse(res, true, 200, data, 'Mendapatkan Data Temp pinjam berhasil', true);
         }).catch(err => {
             sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
         });
@@ -77,7 +78,7 @@ module.exports = {
                         if (getBuku) {
                             for (let i = 0; i < getBuku.length; i++) {
                                 if (getBuku[i] == isbn) {
-                                    sendResponse(res, true, 200, '', 'Buku sudah ditambahkan', true);
+                                    return sendResponse(res, true, 200, {}, 'Buku sudah ditambahkan', true);
                                 }
                             }
                         }
@@ -115,7 +116,7 @@ module.exports = {
         });
     },
     deleteBukuAtTemp: (req, res) => {
-        let isbn = req.params.isbn;
+        let isbn = req.body.isbn;
         let id = req.body.idTempPinjam;
 
         TempPeminjaman.findById(id).then(resultTemp => {
