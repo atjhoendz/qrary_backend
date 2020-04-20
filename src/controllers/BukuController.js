@@ -21,7 +21,8 @@ module.exports = {
                     penulis: req.body.penulis,
                     kategori: setKategori(req.body.kategori),
                     penerjemah: req.body.penerjemah,
-                    tanggalTerbit: req.body.tanggalTerbit
+                    tanggalTerbit: req.body.tanggalTerbit,
+                    urlFoto: req.body.urlFoto
                 }).then(buku => {
                     sendResponse(res, true, 201, buku, 'Buku berhasil ditambahkan', true);
                 }).catch(err => {
@@ -114,7 +115,8 @@ module.exports = {
             penulis: req.body.penulis,
             kategori: setKategori(req.body.kategori),
             penerjemah: req.body.penerjemah,
-            tanggalTerbit: req.body.tanggalTerbit
+            tanggalTerbit: req.body.tanggalTerbit,
+            urlFoto: req.body.urlFoto
         }).then(result => {
             if (Object.keys(result).length > 0) {
                 sendResponse(res, true, 200, result, 'Buku berhasil diperbarui', true);
