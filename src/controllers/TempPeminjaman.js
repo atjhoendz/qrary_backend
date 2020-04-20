@@ -6,11 +6,27 @@ const { sendResponse } = require('../utils/formatResponse');
 
 module.exports = {
     getAllTempPinjam: (req, res) => {
-        TempPeminjaman.find({}).then(results => {
-            data = results;
-            sendResponse(res, true, 200, data, 'Mendapatkan Data Temp pinjam berhasil', true);
-        }).catch(err => {
-            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+        TempPeminjaman.aggregate([{
+                $lookup: {
+                    from: 'Buku',
+                    localField: 'isbnBuku',
+                    foreignField: 'isbn',
+                    as: 'buku'
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    idUser: 1,
+                    buku: '$buku'
+                }
+            }
+        ]).exec((err, result) => {
+            if (err) {
+                sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+            } else {
+                sendResponse(res, true, 200, result, 'Mendapatkan Semua data temp peminjaman berhasil', true);
+            }
         });
     },
     getPengunjungToTemp: (req, res) => {
