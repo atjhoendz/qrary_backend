@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const { sendResponse } = require('../utils/formatResponse');
+const { genInfoFromNPM } = require('../utils/genInfoFromNPM');
 const round = 10;
 
 const setUrlFoto = (npm) => {
@@ -24,7 +25,6 @@ const generateOTP = () => {
 };
 
 const sendEmailOTP = (email, res) => {
-
     let transporter = nodemailer.createTransport({
         host: process.env.EMAIL_SMTP,
         port: process.env.EMAIL_PORT,
@@ -76,11 +76,17 @@ module.exports = {
             }).then(hasil => {
                 if (hasil == null) {
                     bcrypt.hash(req.body.pwd, round).then(hashed => {
+
+                        let datanpm = genInfoFromNPM(req.body.npm);
+
                         User.create({
                             nama: req.body.nama,
                             npm: req.body.npm,
                             email: req.body.email,
                             pwd: hashed,
+                            programStudi: datanpm.prodi,
+                            fakultas: datanpm.fakultas,
+                            angkatan: datanpm.angkatan,
                             role: "user",
                             isConfirmed: false,
                             urlFoto: setUrlFoto(req.body.npm)
@@ -163,7 +169,7 @@ module.exports = {
                 }
             }).catch(err => {
                 sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
-            })
+            });
 
         } else {
             sendResponse(res, false, 200, {}, 'Kode OTP Salah!', true);
