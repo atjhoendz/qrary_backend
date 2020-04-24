@@ -1,5 +1,6 @@
 const Buku = require('../models/buku');
 const { sendResponse } = require('../utils/formatResponse');
+const mongoose = require('mongoose');
 
 const setKategori = (kategori) => {
     return kategori.split(',');
@@ -87,11 +88,26 @@ module.exports = {
         let query = {};
         query[key] = new RegExp(value, 'i');
 
-        Buku.find(query).orFail().then(result => {
-            sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
-        }).catch(err => {
-            sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
-        });
+
+        if (key == "_id") {
+            value = mongoose.Types.ObjectId(value);
+
+            Buku.findById(value).then(result => {
+                if (result) {
+                    sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
+                } else {
+                    sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                }
+            }).catch(err => {
+                sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+            });
+        } else {
+            Buku.find(query).then(result => {
+                sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
+            }).catch(err => {
+                sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+            });
+        }
     },
     deleteBuku: (req, res) => {
         let id = req.params.id;
