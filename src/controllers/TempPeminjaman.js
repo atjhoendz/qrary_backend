@@ -2,7 +2,7 @@ const TempPeminjaman = require('../models/tempPeminjaman');
 const Pengunjung = require('../models/pengunjung');
 const User = require('../models/user');
 const Buku = require('../models/buku');
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
 const mongoose = require('mongoose');
 
 module.exports = {
@@ -52,8 +52,13 @@ module.exports = {
                                         isModePinjam: true
                                     }
                                 }).then(resultUpdateUser => {
+                                    let data = {
+                                        _id: resultTemp._id,
+                                        pengunjung: resultUpdateUser
+                                    }
+
                                     if (resultUpdateUser) {
-                                        sendResponse(res, true, 200, resultUpdateUser, 'Data pengunjung berhasil didapatkan', true);
+                                        sendResponse(res, true, 200, data, 'Data pengunjung berhasil didapatkan', true);
                                     } else {
                                         sendResponse(res, true, 200, {}, 'Data pengunjung tidak berhasil didapatkan', true);
                                     }

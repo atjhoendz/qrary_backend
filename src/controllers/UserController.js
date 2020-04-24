@@ -1,25 +1,9 @@
 const User = require('../models/user');
-const Admin = require('../models/admin');
 const bcrypt = require('bcryptjs');
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
+const setUrlFoto = require('../utils/setUrlFoto');
+const genInfoFromNPm = require('../utils/genInfoFromNPM');
 const round = 10;
-
-const setUrlFoto = (npm, type) => {
-    let prefixUrl = `https://media.unpad.ac.id/photo/${type}/`;
-
-    if (type == 'mahasiswa') {
-        let prodi = npm.substring(0, 6);
-        let angkatan = `20${npm.substring(6, 8)}`;
-        return `${prefixUrl + prodi}/${angkatan}/${npm}.JPG`;
-    } else if (type == 'pegawai') {
-        return `${prefixUrl + npm}.jpg`;
-    }
-};
-
-const genUsername = (nip) => {
-    let tanggalLahir = nip.substr(0, 8);
-    return tanggalLahir + Math.floor(1000 + Math.random() * 9000);
-};
 
 module.exports = {
     getAll: (req, res) => {
@@ -93,9 +77,7 @@ module.exports = {
     update: (req, res) => {
         let id = req.params.id;
         User.findByIdAndUpdate(id, {
-            nama: req.body.nama,
-            npm: req.body.npm,
-            urlFoto: setUrlFoto(req.body.npm, 'mahasiswa')
+            nama: req.body.nama
         }).orFail().then(result => {
             sendResponse(res, true, 200, result, 'User berhasil diperbarui', true);
         }).catch(err => {
@@ -151,28 +133,5 @@ module.exports = {
             sendResponse(res, false, 500, {}, err.message, true);
         });
     },
-    addAdmin: (req, res) => {
-        let username = genUsername(req.body.nip);
 
-        bcrypt.hash(req.body.pwd, round).then(hashed => {
-            Admin.create({
-                username: username,
-                nama: req.body.nama,
-                nip: req.body.nip,
-                email: req.body.email,
-                pwd: hashed,
-                jabatan: req.body.jabatan,
-                jk: req.body.jk,
-                tanggalLahir: req.body.tanggalLahir,
-                alamat: req.body.alamat,
-                urlFoto: setUrlFoto(req.body.nip, 'pegawai')
-            }).then(hasil => {
-                sendResponse(res, true, 200, hasil, 'Admin berhasil ditambahkan', true);
-            }).catch(err => {
-                sendResponse(res, false, 500, '', `Error: ${err}`, true);
-            });
-        }).catch(err => {
-            sendResponse(res, false, 500, '', `Error2: ${err}`, true);
-        });
-    }
 };

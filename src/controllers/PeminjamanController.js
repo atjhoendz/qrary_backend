@@ -1,7 +1,7 @@
 const Peminjaman = require('../models/peminjaman');
 const TempPeminjaman = require('../models/tempPeminjaman');
 const HistoryPeminjaman = require('../models/historyPeminjaman');
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
 
 module.exports = {
     saveFromTemp: (req, res) => {

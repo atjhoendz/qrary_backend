@@ -1,6 +1,6 @@
 const Pengunjung = require('../models/pengunjung');
 const User = require('../models/user');
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
 
 module.exports = {
     add: (req, res) => {

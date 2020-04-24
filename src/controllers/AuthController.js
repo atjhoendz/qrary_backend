@@ -3,16 +3,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
-const { sendResponse } = require('../utils/formatResponse');
-const { genInfoFromNPM } = require('../utils/genInfoFromNPM');
+const sendResponse = require('../utils/formatResponse');
+const setUrlFoto = require('../utils/setUrlFoto');
+const genInfoFromNPM = require('../utils/genInfoFromNPM');
 const round = 10;
-
-const setUrlFoto = (npm) => {
-    let prefixUrl = "https://media.unpad.ac.id/photo/mahasiswa/";
-    let prodi = npm.substring(0, 6);
-    let angkatan = `20${npm.substring(6, 8)}`;
-    return `${prefixUrl + prodi}/${angkatan}/${npm}.JPG`;
-};
 
 const generateOTP = () => {
     let secret = process.env.SECRET_OTP;
@@ -89,7 +83,7 @@ module.exports = {
                             angkatan: datanpm.angkatan,
                             role: "user",
                             isConfirmed: false,
-                            urlFoto: setUrlFoto(req.body.npm)
+                            urlFoto: setUrlFoto(req.body.npm, 'mahasiswa')
                         }).then(user => {
                             sendResponse(res, true, 200, user, 'Pendaftaran berhasil', true);
                         }).catch(err => {

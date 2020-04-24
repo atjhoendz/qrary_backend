@@ -1,5 +1,5 @@
 const Buku = require('../models/buku');
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
 const mongoose = require('mongoose');
 
 const setKategori = (kategori) => {

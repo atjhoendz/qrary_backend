@@ -1,5 +1,5 @@
 const HistoryPeminjaman = require('../models/historyPeminjaman');
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
 
 module.exports = {
     getAll: (req, res) => {

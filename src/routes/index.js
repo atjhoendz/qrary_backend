@@ -10,7 +10,7 @@ const tempPeminjaman = require('./tempPeminjaman');
 const peminjaman = require('./peminjaman');
 const historyPeminjaman = require('./historyPeminjaman');
 
-const { sendResponse } = require('../utils/formatResponse');
+const sendResponse = require('../utils/formatResponse');
 const { isAuth, isAuthorized, isContainReqData } = require('../middlewares/auth');
 
 router.get('/', (req, res) => {

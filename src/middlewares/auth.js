@@ -1,13 +1,7 @@
 const jwt = require('jsonwebtoken');
 const urlExist = require('url-exists');
-const { sendResponse } = require('../utils/formatResponse');
-
-const setUrlFoto = (npm) => {
-    let prefixUrl = "https://media.unpad.ac.id/photo/mahasiswa/";
-    let prodi = npm.substring(0, 6);
-    let angkatan = `20${npm.substring(6, 8)}`;
-    return `${prefixUrl + prodi}/${angkatan}/${npm}.JPG`;
-};
+const sendResponse = require('../utils/formatResponse');
+const setUrlFoto = require('../utils/setUrlFoto');
 
 module.exports = {
     isAuth: (req, res, next) => {
@@ -35,7 +29,7 @@ module.exports = {
         }
     },
     isValidNPM: (req, res, next) => {
-        let url = setUrlFoto(req.body.npm);
+        let url = setUrlFoto(req.body.npm, 'mahasiswa');
         urlExist(url, (err, exist) => {
             if (exist) {
                 next();
@@ -55,5 +49,15 @@ module.exports = {
             req.params.limit = limit;
             next();
         }
+    },
+    isValidNIP: (req, res, next) => {
+        let url = setUrlFoto(req.body.nip, 'pegawai');
+        urlExist(url, (err, exist) => {
+            if (exist) {
+                next();
+            } else {
+                sendResponse(res, true, 200, {}, 'NIP tidak valid', true);
+            }
+        });
     }
 };
