@@ -8,32 +8,23 @@ const setKategori = (kategori) => {
 
 module.exports = {
     add: (req, res) => {
-        Buku.find({
-            isbn: req.body.isbn
-        }).then(result => {
-            if (Object.keys(result).length == 0) {
-                Buku.create({
-                    bahasa: req.body.bahasa,
-                    isbn: req.body.isbn,
-                    jmlHal: req.body.jmlHal,
-                    judul: req.body.judul,
-                    deskripsi: req.body.deskripsi,
-                    penerbit: req.body.penerbit,
-                    penulis: req.body.penulis,
-                    kategori: setKategori(req.body.kategori),
-                    penerjemah: req.body.penerjemah,
-                    tanggalTerbit: req.body.tanggalTerbit,
-                    urlFoto: req.body.urlFoto
-                }).then(buku => {
-                    sendResponse(res, true, 201, buku, 'Buku berhasil ditambahkan', true);
-                }).catch(err => {
-                    sendResponse(res, true, 200, {}, `Buku tidak berhasil ditambahkan, ${err.message}`, true);
-                });
-            } else {
-                sendResponse(res, true, 200, {}, 'Nomor ISBN sudah tersedia', true);
-            }
+        Buku.create({
+            bahasa: req.body.bahasa,
+            isbn: req.body.isbn,
+            jmlHal: req.body.jmlHal,
+            judul: req.body.judul,
+            deskripsi: req.body.deskripsi,
+            penerbit: req.body.penerbit,
+            penulis: req.body.penulis,
+            kategori: setKategori(req.body.kategori),
+            penerjemah: req.body.penerjemah,
+            tanggalTerbit: req.body.tanggalTerbit,
+            status: req.body.status,
+            urlFoto: req.body.urlFoto
+        }).then(buku => {
+            sendResponse(res, true, 201, buku, 'Buku berhasil ditambahkan', true);
         }).catch(err => {
-            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+            sendResponse(res, true, 200, {}, `Buku tidak berhasil ditambahkan, ${err.message}`, true);
         });
     },
     getAll: (req, res) => {
@@ -103,7 +94,11 @@ module.exports = {
             });
         } else {
             Buku.find(query).then(result => {
-                sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
+                if (result.length > 0) {
+                    sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
+                } else {
+                    sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                }
             }).catch(err => {
                 sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
             });
@@ -132,6 +127,7 @@ module.exports = {
             kategori: setKategori(req.body.kategori),
             penerjemah: req.body.penerjemah,
             tanggalTerbit: req.body.tanggalTerbit,
+            status: req.body.status,
             urlFoto: req.body.urlFoto
         }).then(result => {
             if (Object.keys(result).length > 0) {

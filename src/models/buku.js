@@ -18,6 +18,7 @@ const BukuSchema = new Schema({
     kategori: Array,
     penerjemah: String,
     tanggalTerbit: String,
+    status: String,
     urlFoto: String
 });
 
