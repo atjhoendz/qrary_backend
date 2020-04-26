@@ -26,7 +26,11 @@ module.exports = {
             if (err) {
                 sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
             } else {
-                sendResponse(res, true, 200, result, 'Mendapatkan Semua data temp peminjaman berhasil', true);
+                if (result.length > 0) {
+                    sendResponse(res, true, 200, result, 'Mendapatkan Semua data temp peminjaman berhasil', true);
+                } else {
+                    sendResponse(res, true, 200, {}, 'Data temp peminjaman kosong', true);
+                }
             }
         });
     },
@@ -41,10 +45,11 @@ module.exports = {
                     idUser: resultUser._id
                 }).then(resultPengunjung => {
                     if (resultPengunjung) {
-                        TempPeminjaman.create({
+
+                        TempPeminjaman.findOne({
                             idUser: resultPengunjung.idUser
-                        }).then(resultTemp => {
-                            if (resultTemp) {
+                        }).then(resultFindTemp => {
+                            if (resultFindTemp) {
                                 User.findOneAndUpdate({
                                     npm: npm
                                 }, {
@@ -53,7 +58,7 @@ module.exports = {
                                     }
                                 }).then(resultUpdateUser => {
                                     let data = {
-                                        _id: resultTemp._id,
+                                        _id: resultFindTemp._id,
                                         pengunjung: resultUpdateUser
                                     }
 
@@ -65,9 +70,38 @@ module.exports = {
                                 }).catch(err => {
                                     sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                                 });
+                            } else {
+                                TempPeminjaman.create({
+                                    idUser: resultPengunjung.idUser
+                                }).then(resultTemp => {
+                                    if (resultTemp) {
+                                        User.findOneAndUpdate({
+                                            npm: npm
+                                        }, {
+                                            $set: {
+                                                isModePinjam: true
+                                            }
+                                        }).then(resultUpdateUser => {
+                                            let data = {
+                                                _id: resultTemp._id,
+                                                pengunjung: resultUpdateUser
+                                            }
+
+                                            if (resultUpdateUser) {
+                                                sendResponse(res, true, 200, data, 'Data pengunjung berhasil didapatkan', true);
+                                            } else {
+                                                sendResponse(res, true, 200, {}, 'Data pengunjung tidak berhasil didapatkan', true);
+                                            }
+                                        }).catch(err => {
+                                            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+                                        });
+                                    }
+                                }).catch(err => {
+                                    sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+                                });
                             }
                         }).catch(err => {
-                            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+                            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
                         });
                     } else {
                         sendResponse(res, true, 200, {}, 'NPM belum terdaftar sebagai pengunjung', true);
