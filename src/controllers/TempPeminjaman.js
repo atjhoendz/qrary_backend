@@ -200,7 +200,13 @@ module.exports = {
                         }
                     }).then(resultUpdate => {
                         if (resultUpdate) {
-                            sendResponse(res, true, 200, resultUpdate, 'Buku berhasil dihapus', true);
+                            Buku.find({
+                                isbn: isbn
+                            }).then(resultBuku => {
+                                sendResponse(res, true, 200, resultBuku, 'Buku berhasil dihapus', true);
+                            }).catch(err => {
+                                sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+                            })
                         } else {
                             sendResponse(res, true, 200, {}, 'Data temp pinjam tidak ditemukan', true);
                         }
