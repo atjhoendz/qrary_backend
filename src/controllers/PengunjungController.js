@@ -11,18 +11,33 @@ module.exports = {
             npm: npm
         }).then(result => {
             if (result) {
-                Pengunjung.create({
-                    idUser: result._id,
-                    waktuMasuk: waktuMasuk
-                }).then(resultCreate => {
-                    let data = {
-                        _id: resultCreate._id,
-                        user: result,
-                        waktuMasuk: resultCreate.waktuMasuk
+                Pengunjung.updateMany({
+                    $and: [{
+                        idUser: result._id,
+                        waktuMasuk: {
+                            $ne: waktuMasuk
+                        }
+                    }]
+                }, {
+                    $set: {
+                        isExpired: true
                     }
-                    sendResponse(res, true, 201, data, 'Pengunjung berhasil ditambahkan', true);
+                }).then(resultFind => {
+                    Pengunjung.create({
+                        idUser: result._id,
+                        waktuMasuk: waktuMasuk
+                    }).then(resultCreate => {
+                        let data = {
+                            _id: resultCreate._id,
+                            user: result,
+                            waktuMasuk: resultCreate.waktuMasuk
+                        }
+                        sendResponse(res, true, 201, data, 'Pengunjung berhasil ditambahkan', true);
+                    }).catch(err => {
+                        sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
+                    });
                 }).catch(err => {
-                    sendResponse(res, false, 200, {}, `Error: ${err.message}`, true);
+                    sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
                 });
             } else {
                 sendResponse(res, true, 200, {}, 'User tidak ditemukan', true);
@@ -44,6 +59,7 @@ module.exports = {
             {
                 $project: {
                     waktuMasuk: 1,
+                    isExpired: 1,
                     user: '$user'
                 }
             }
@@ -71,6 +87,7 @@ module.exports = {
             {
                 $project: {
                     waktuMasuk: 1,
+                    isExpired: 1,
                     user: '$user'
                 }
             }
@@ -128,6 +145,7 @@ module.exports = {
             {
                 $project: {
                     waktuMasuk: 1,
+                    isExpired: 1,
                     user: '$user'
                 }
             }
@@ -137,7 +155,11 @@ module.exports = {
             } else {
 
                 let dataUser = results.filter(result => {
-                    return result.user[key].match(query[key]);
+                    if (key == "_id") {
+                        return result._id == value;
+                    } else {
+                        return result.user[key].match(query[key]);
+                    }
                 });
 
                 if (dataUser.length > 0) {

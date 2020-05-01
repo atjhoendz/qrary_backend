@@ -10,6 +10,10 @@ const PengunjungSchema = new Schema({
     waktuMasuk: {
         type: Date,
         required: true
+    },
+    isExpired: {
+        type: Boolean,
+        default: false
     }
 });
 
