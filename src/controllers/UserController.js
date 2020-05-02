@@ -192,7 +192,7 @@ module.exports = {
                                 from: 'qrary@himatif.org',
                                 to: email,
                                 subject: 'Reset Password Qrary',
-                                html: `<p>Password berhasil direset dengan informasi sebagai beriku:</p>
+                                html: `<p>Password berhasil direset dengan informasi sebagai berikut:</p>
                                 <br>
                                 <p><b>Email:</b> ${email}</p>
                                 <p><b>Password Baru:</b> ${newPwd}</p>
