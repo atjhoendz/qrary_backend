@@ -1,9 +1,43 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const sendResponse = require('../utils/formatResponse');
-const setUrlFoto = require('../utils/setUrlFoto');
-const genInfoFromNPm = require('../utils/genInfoFromNPM');
+const nodemailer = require('nodemailer');
+const sendMail = require('../utils/sendMail');
 const round = 10;
+
+const randString = (len) => {
+    let alphaNum = '0123456789abcdefghijklmnopqrstuvwxyz';
+    let str = '';
+    for (let i = len; i > 0; i--) {
+        str += alphaNum[Math.floor(Math.random() * alphaNum.length)];
+    }
+    return str;
+};
+
+const genKeyforURI = () => {
+    let today = new Date().toLocaleString('id', { timeZone: 'Asia/Jakarta' });
+    let hari = new Date(today).getDate();
+    let bulan = new Date(today).getMonth();
+    let jam = new Date(today).getHours();
+
+    let key = `${hari}${bulan}${jam}`;
+
+    let hashed = bcrypt.hashSync(key, round);
+    return hashed;
+}
+
+const checkKeyforURL = (hashedKey) => {
+    let today = new Date().toLocaleString('id', { timeZone: 'Asia/Jakarta' });
+    let hari = new Date(today).getDate();
+    let bulan = new Date(today).getMonth();
+    let jam = new Date(today).getHours();
+
+    let key = `${hari}${bulan}${jam}`;
+
+    let isValid = bcrypt.compareSync(key, hashedKey);
+
+    return isValid;
+}
 
 module.exports = {
     getAll: (req, res) => {
@@ -133,5 +167,93 @@ module.exports = {
             sendResponse(res, false, 500, {}, err.message, true);
         });
     },
+    resetPassword: (req, res) => {
+        let email = req.query.e;
+        let hashedKey = req.query.q;
 
+        if (typeof(email) == 'undefined' || typeof(hashedKey) == 'undefined')
+            return sendResponse(res, true, 404, {}, 'Route not found', true);
+
+        if (checkKeyforURL(hashedKey)) {
+            User.findOne({
+                email: email
+            }).then(resultFind => {
+                if (resultFind) {
+                    let newPwd = randString(9);
+                    bcrypt.hash(newPwd, round).then(hashed => {
+                        User.findOneAndUpdate({
+                            email: email
+                        }, {
+                            $set: {
+                                pwd: hashed
+                            }
+                        }).then(resultUpdate => {
+                            let message = {
+                                from: 'qrary@himatif.org',
+                                to: email,
+                                subject: 'Reset Password Qrary',
+                                html: `<p>Password berhasil direset dengan informasi sebagai beriku:</p>
+                                <br>
+                                <p><b>Email:</b> ${email}</p>
+                                <p><b>Password Baru:</b> ${newPwd}</p>
+                                <br>
+                                <p>Silahkan login ke aplikasi Qrary kemudian lakukan ubah password. Terima kasih.</p>`
+                            }
+                            if (sendMail(message)) {
+                                res.send('<p>Password berhasil direset. Silahkan cek email anda</p>');
+                            } else {
+                                res.send('<p>Email tidak berhasil dikirim</p>');
+                            }
+                        }).catch(err => {
+                            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+                        });
+                    }).catch(err => {
+                        sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+                    });
+                } else {
+                    sendResponse(res, true, 200, {}, 'Email tidak ditemukan', true);
+                }
+            }).catch(err => {
+                sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+            });
+        } else {
+            return res.send('<p>Url tidak valid. Silahkan periksa kembali</p>');
+        }
+    },
+    sendMailResetPWD: (req, res) => {
+        let email = req.body.email;
+
+        let urlReset = `${process.env.BASEURL}/api/v1/user/reset/pwd?e=${email}&q=${genKeyforURI()}`;
+
+        User.findOne({
+            email: email
+        }).then(result => {
+            if (result) {
+                let message = {
+                    from: 'qrary@himatif.org',
+                    to: email,
+                    subject: 'Reset Password Qrary',
+                    html: `<p>Silahkan tekan tombol <b>Reset Password</b> dibawah ini untuk mendapatkan password baru.</p>
+                    <a href="${urlReset}" style="text-decoration: none;
+                    background-color: #3399ff;
+                    color: white;
+                    padding: 10px;
+                    border-radius: 10px;
+                    font-weight: bold;
+                    margin: 10px;
+                    ">RESET PASSWORD</a>`
+                }
+
+                if (sendMail(message)) {
+                    sendResponse(res, true, 200, {}, 'Email berhasil dikirim', true);
+                } else {
+                    sendResponse(res, true, 200, {}, 'tidak berhasil', true);
+                }
+            } else {
+                sendResponse(res, true, 200, {}, 'Email tidak ditemukan', true);
+            }
+        }).catch(err => {
+            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+        });
+    }
 };

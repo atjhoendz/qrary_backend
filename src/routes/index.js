@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('/auth', isContainReqData, auth);
-router.use('/user', isAuth, user);
+router.use('/user', user);
 router.use('/buku', isAuth, buku);
 router.use('/pengunjung', isAuth, pengunjung);
 router.use('/temp/pinjam', isAuth, tempPeminjaman);
