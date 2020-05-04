@@ -55,8 +55,9 @@ module.exports = {
             } else {
                 if (result.length > 0) {
                     return sendResponse(res, true, 200, result, 'Mendapatkan semua data Peminjaman sukses', true);
+                } else {
+                    return sendResponse(res, true, 200, result, 'Data Peminjaman kosong', true);
                 }
-                return sendResponse(res, true, 200, result, 'Data Peminjaman kosong', true);
             }
         });
     },

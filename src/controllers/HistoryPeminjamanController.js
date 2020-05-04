@@ -18,8 +18,9 @@ module.exports = {
             } else {
                 if (result.length > 0) {
                     return sendResponse(res, true, 200, result, 'Mendapatkan semua data History Peminjaman sukses', true);
+                } else {
+                    return sendResponse(res, true, 200, result, 'Data History Peminjaman kosong', true);
                 }
-                return sendResponse(res, true, 200, result, 'Data History Peminjaman kosong', true);
             }
         });
     },
