@@ -53,7 +53,10 @@ module.exports = {
             if (err) {
                 sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
             } else {
-                sendResponse(res, true, 200, result, 'Mendapatkan semua data Peminjaman sukses', true);
+                if (result.length > 0) {
+                    return sendResponse(res, true, 200, result, 'Mendapatkan semua data Peminjaman sukses', true);
+                }
+                return sendResponse(res, true, 200, result, 'Data Peminjaman kosong', true);
             }
         });
     },

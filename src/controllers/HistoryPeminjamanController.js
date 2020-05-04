@@ -3,10 +3,24 @@ const sendResponse = require('../utils/formatResponse');
 
 module.exports = {
     getAll: (req, res) => {
-        HistoryPeminjaman.find({}).then(result => {
-            sendResponse(res, true, 200, result, 'Mendapatkan semua data history peminjaman berhasil', true);
-        }).catch(err => {
-            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+        HistoryPeminjaman.aggregate([{
+            $lookup: {
+                from: 'User',
+                localField: 'idUser',
+                foreignField: '_id',
+                as: 'user'
+            }
+        }, {
+            $unwind: '$user'
+        }]).exec((err, result) => {
+            if (err) {
+                sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+            } else {
+                if (result.length > 0) {
+                    return sendResponse(res, true, 200, result, 'Mendapatkan semua data History Peminjaman sukses', true);
+                }
+                return sendResponse(res, true, 200, result, 'Data History Peminjaman kosong', true);
+            }
         });
     },
     getPaginate: (req, res) => {
