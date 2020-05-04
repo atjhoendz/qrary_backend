@@ -128,16 +128,14 @@ module.exports = {
     },
     getBukuToTemp: (req, res) => {
         let isbn = req.body.isbn;
-        let idTempUser = req.body.idUserAtTemp;
+        let idTempPinjam = req.body.idTempPinjam;
 
         Buku.findOne({
             isbn: isbn
         }).then(resultBuku => {
             if (resultBuku) {
 
-                TempPeminjaman.findOne({
-                    idUser: idTempUser
-                }).then(resultFindUser => {
+                TempPeminjaman.findById(mongoose.Types.ObjectId(idTempPinjam)).then(resultFindUser => {
                     if (resultFindUser) {
                         let getBuku = resultFindUser.isbnBuku;
 
@@ -154,7 +152,7 @@ module.exports = {
                         let newBuku = getBuku;
 
                         TempPeminjaman.findOneAndUpdate({
-                            idUser: idTempUser
+                            _id: mongoose.Types.ObjectId(idTempPinjam)
                         }, {
                             $set: {
                                 isbnBuku: newBuku
