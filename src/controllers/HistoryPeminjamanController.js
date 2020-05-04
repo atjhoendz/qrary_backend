@@ -117,7 +117,7 @@ module.exports = {
                 if (dataPeminjaman.length > 0) {
                     sendResponse(res, true, 200, dataPeminjaman, 'Mendapatkan data history peminjaman berhasil', true);
                 } else {
-                    sendResponse(res, true, 200, {}, 'Data history peminjaman tidak ditemukan', true);
+                    sendResponse(res, true, 200, [], 'Data history peminjaman tidak ditemukan', true);
                 }
             }
         });

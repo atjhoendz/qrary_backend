@@ -154,7 +154,7 @@ module.exports = {
                 if (dataPeminjaman.length > 0) {
                     sendResponse(res, true, 200, dataPeminjaman, 'Mendapatkan data peminjaman berhasil', true);
                 } else {
-                    sendResponse(res, true, 200, {}, 'Data peminjaman tidak ditemukan', true);
+                    sendResponse(res, true, 200, [], 'Data peminjaman tidak ditemukan', true);
                 }
             }
         });
