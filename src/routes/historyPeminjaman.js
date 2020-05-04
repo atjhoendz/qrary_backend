@@ -5,6 +5,6 @@ const { isPageaNumber } = require('../middlewares/auth');
 
 router.get('/getall', getAll);
 router.get('/page/:page/limit/:limit', isPageaNumber, getPaginate);
-router.get('/find/:key/:value', find);
+router.get('/find', find);
 
 module.exports = router;

@@ -63,15 +63,62 @@ module.exports = {
         });
     },
     find: (req, res) => {
-        let key = req.params.key;
-        let value = req.params.value;
+        let key = req.query.key;
+        let value = req.query.value;
         let query = {};
         query[key] = new RegExp(value, 'i');
 
-        HistoryPeminjaman.find(query).orFail().then(result => {
-            sendResponse(res, true, 200, result, 'Mendapatkan data Peminjaman berhasil', true);
-        }).catch(err => {
-            sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+        HistoryPeminjaman.aggregate([{
+                $lookup: {
+                    from: 'Buku',
+                    localField: 'isbnBuku',
+                    foreignField: 'isbn',
+                    as: 'buku',
+                }
+            },
+            {
+                $lookup: {
+                    from: 'User',
+                    localField: 'idUser',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $project: {
+                    _id: 1,
+                    tanggalMeminjam: 1,
+                    tanggalKembali: 1,
+                    isDikembalikan: 1,
+                    user: '$user',
+                    buku: '$buku'
+                }
+            }
+        ]).exec((err, results) => {
+            if (err) {
+                sendResponse(res, false, 500, '', `Error: ${err}`, true);
+            } else {
+                if (typeof(key) == 'undefined' || typeof(value) == 'undefined')
+                    return sendResponse(res, true, 404, {}, 'Route not found...', true);
+
+                let dataPeminjaman = results.filter(result => {
+                    if (key == "_id") {
+                        return result._id == value;
+                    } else {
+                        if (result.user[key])
+                            return result.user[key].match(query[key]);
+                    }
+                });
+
+                if (dataPeminjaman.length > 0) {
+                    sendResponse(res, true, 200, dataPeminjaman, 'Mendapatkan data history peminjaman berhasil', true);
+                } else {
+                    sendResponse(res, true, 200, {}, 'Data history peminjaman tidak ditemukan', true);
+                }
+            }
         });
     }
 };

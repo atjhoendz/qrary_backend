@@ -145,14 +145,15 @@ module.exports = {
                     if (key == "_id") {
                         return result._id == value;
                     } else {
-                        return result.user[key].match(query[key]);
+                        if (result.user[key])
+                            return result.user[key].match(query[key]);
                     }
                 });
 
                 if (dataPeminjaman.length > 0) {
-                    sendResponse(res, true, 200, dataPeminjaman, 'Mendapatkan data pengunjung berhasil', true);
+                    sendResponse(res, true, 200, dataPeminjaman, 'Mendapatkan data peminjaman berhasil', true);
                 } else {
-                    sendResponse(res, true, 200, {}, 'Pengunjung tidak ditemukan', true);
+                    sendResponse(res, true, 200, {}, 'Data peminjaman tidak ditemukan', true);
                 }
             }
         });
