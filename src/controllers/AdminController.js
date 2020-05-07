@@ -52,8 +52,8 @@ module.exports = {
         })
     },
     find: (req, res) => {
-        let key = req.params.key;
-        let value = req.params.value;
+        let key = req.query.key;
+        let value = req.query.value;
         let query = {};
         query[key] = new RegExp(value, 'i');
 

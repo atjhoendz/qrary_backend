@@ -128,8 +128,8 @@ module.exports = {
         });
     },
     find: (req, res) => {
-        let key = req.params.key;
-        let value = req.params.value;
+        let key = req.query.key;
+        let value = req.query.value;
         let query = {};
         query[key] = new RegExp(value, 'i');
 
@@ -158,7 +158,8 @@ module.exports = {
                     if (key == "_id") {
                         return result._id == value;
                     } else {
-                        return result.user[key].match(query[key]);
+                        if (result.user[key])
+                            return result.user[key].match(query[key]);
                     }
                 });
 

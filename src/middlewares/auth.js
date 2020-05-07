@@ -59,5 +59,15 @@ module.exports = {
                 sendResponse(res, true, 200, {}, 'NIP tidak valid', true);
             }
         });
+    },
+    isQueryValid: (req, res, next) => {
+        let key = req.query.key;
+        let value = req.query.value;
+
+        if (typeof(key) == 'undefined' || typeof(value) == 'undefined') {
+            sendResponse(res, true, 404, '', 'Route not found...', true);
+        } else {
+            next();
+        }
     }
 };

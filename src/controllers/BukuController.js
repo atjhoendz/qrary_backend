@@ -74,11 +74,10 @@ module.exports = {
         });
     },
     find: (req, res) => {
-        let key = req.params.key;
-        let value = req.params.value;
+        let key = req.query.key;
+        let value = req.query.value;
         let query = {};
         query[key] = new RegExp(value, 'i');
-
 
         if (key == "_id") {
             value = mongoose.Types.ObjectId(value);
@@ -87,20 +86,57 @@ module.exports = {
                 if (result) {
                     sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
                 } else {
-                    sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                    sendResponse(res, true, 200, [], 'Buku tidak ditemukan', true);
                 }
             }).catch(err => {
-                sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
+            });
+        } else if (key == "default") {
+            val = new RegExp(value, 'i');
+            Buku.find({
+                judul: val
+            }).then(resultJudul => {
+                if (resultJudul.length > 0) {
+                    sendResponse(res, true, 200, resultJudul, 'Data buku berhasil didapatkan', true);
+                } else {
+                    Buku.find({
+                        deskripsi: val
+                    }).then(resultDesk => {
+                        if (resultDesk.length > 0) {
+                            sendResponse(res, true, 200, resultDesk, 'Data buku berhasil didapatkan', true);
+                        } else {
+                            Buku.find({
+                                penulis: val
+                            }).then(resultPenulis => {
+                                if (resultPenulis.length > 0) {
+                                    sendResponse(res, true, 200, resultPenulis, 'Data buku berhasil didapatkan', true);
+                                } else {
+                                    Buku.find({
+                                        kategori: val
+                                    }).then(resultKat => {
+                                        if (resultKat.length > 0) {
+                                            sendResponse(res, true, 200, resultKat, 'Data buku berhasil didapatkan', true);
+                                        } else {
+                                            sendResponse(res, true, 200, [], 'Data buku tidak ditemukan', true);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            }).catch(err => {
+                sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
             });
         } else {
             Buku.find(query).then(result => {
                 if (result.length > 0) {
                     sendResponse(res, true, 200, result, 'Mendapatkan data buku berhasil', true);
                 } else {
-                    sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                    sendResponse(res, true, 200, [], 'Buku tidak ditemukan', true);
                 }
             }).catch(err => {
-                sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
             });
         }
     },

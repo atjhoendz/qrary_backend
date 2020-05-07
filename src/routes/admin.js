@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { addAdmin, getAll, find, getPaginate, deleteAdmin, update, updatePassword, updateRole } = require('../controllers/AdminController');
-const { isContainReqData, isAuth, isAuthorized, isValidNIP } = require('../middlewares/auth');
+const { isContainReqData, isAuth, isAuthorized, isValidNIP, isQueryValid } = require('../middlewares/auth');
 
 router.get('/getall', isAuth, isAuthorized, getAll);
-router.get('/find/:key/:value', isAuth, isAuthorized, find);
+router.get('/find', isAuth, isAuthorized, isQueryValid, find);
 router.get('/page/:page/limit/:limit', isAuth, isAuthorized, getPaginate);
 router.post('/add', isContainReqData, isValidNIP, addAdmin);
 router.delete('/delete/:id', isAuth, isAuthorized, deleteAdmin);
