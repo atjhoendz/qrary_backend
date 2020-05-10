@@ -66,6 +66,8 @@ module.exports = {
 
         if (typeof(key) == 'undefined' || typeof(value) == 'undefined') {
             sendResponse(res, true, 404, '', 'Route not found...', true);
+        } else if (key == "" || value == "") {
+            sendResponse(res, true, 200, [], 'Data tidak ditemukan', true);
         } else {
             next();
         }
