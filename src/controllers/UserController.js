@@ -243,9 +243,11 @@ module.exports = {
                     margin: 10px;
                     ">RESET PASSWORD</a>`
                 }
-
                 if (sendMail(message)) {
-                    sendResponse(res, true, 200, {}, 'Email berhasil dikirim', true);
+                    let emailResponse = {
+                        email: email
+                    }
+                    sendResponse(res, true, 200, emailResponse, 'Email berhasil dikirim', true);
                 } else {
                     sendResponse(res, true, 200, {}, 'tidak berhasil', true);
                 }
