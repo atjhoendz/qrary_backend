@@ -1,4 +1,5 @@
 const Buku = require('../models/buku');
+const Peminjaman = require('../models/peminjaman');
 const sendResponse = require('../utils/formatResponse');
 const mongoose = require('mongoose');
 
@@ -142,12 +143,29 @@ module.exports = {
     },
     deleteBuku: (req, res) => {
         let id = req.params.id;
-        Buku.deleteOne({
-            _id: id
-        }).orFail().then(result => {
-            sendResponse(res, true, 200, result, 'Buku berhasil dihapus', true);
+
+        Buku.findById(id).then(resultFindBuku => {
+            if (resultFindBuku) {
+                Peminjaman.find({
+                    isbnBuku: resultFindBuku.isbn
+                }).then(resultfindPinjam => {
+                    if (resultfindPinjam.length > 0) {
+                        sendResponse(res, true, 200, {}, 'Buku sedang dipinjam, tidak dapat dihapus', true);
+                    } else {
+                        Buku.deleteOne({
+                            _id: id
+                        }).orFail().then(result => {
+                            sendResponse(res, true, 200, result, 'Buku berhasil dihapus', true);
+                        }).catch(err => {
+                            sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+                        });
+                    }
+                })
+            } else {
+                sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+            }
         }).catch(err => {
-            sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
+            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
         });
     },
     update: (req, res) => {
