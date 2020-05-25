@@ -199,6 +199,7 @@ module.exports = {
                                 <p>Silahkan login ke aplikasi Qrary kemudian lakukan ubah password. Terima kasih.</p>`
                             }
                             if (sendMail(message)) {
+                                console.log('result sendMail : true');
                                 return res.send('<p>Password berhasil direset. Silahkan cek email anda</p>');
                             } else {
                                 return res.send('<p>Email tidak berhasil dikirim</p>');
