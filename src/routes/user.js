@@ -8,7 +8,7 @@ router.get('/page/:page/limit/:limit', isAuth, isPageaNumber, isAuthorized, getP
 router.get('/find', isAuth, isQueryValid, find);
 router.delete('/delete/:id', isAuth, isAuthorized, deleteUser);
 router.put('/update/:id', isAuth, isAuthorized, isContainReqData, update);
-router.put('/update/pwd/:id', isAuth, isAuthorized, isContainReqData, updatePassword);
+router.put('/update/pwd/:npm', isAuth, isAuthorized, isContainReqData, updatePassword);
 router.post('/setmodepinjam', isAuth, isAuthorized, isContainReqData, setModePinjam);
 router.get('/reset/pwd', resetPassword);
 router.post('/reset/pwd/sendEmail', isContainReqData, sendMailResetPWD);

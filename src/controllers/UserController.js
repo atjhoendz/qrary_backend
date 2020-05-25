@@ -118,19 +118,21 @@ module.exports = {
         });
     },
     updatePassword: (req, res) => {
-        let id = req.params.id;
+        let npm = req.params.npm;
         let oldPwd = req.body.oldPwd;
-        let confirmOldPwd = req.body.confirmOldPwd;
+        let confirmNewPwd = req.body.confirmNewPwd;
         let newPwd = req.body.newPwd;
 
-        if (oldPwd !== confirmOldPwd) {
-            sendResponse(res, true, 200, {}, 'Konfirmasi kata sandi tidak sama', true);
+        if (newPwd !== confirmNewPwd) {
+            return sendResponse(res, true, 200, {}, 'Konfirmasi kata sandi tidak sama', true);
         } else {
-            User.findById(id).orFail().then(result => {
+            User.findOne({
+                npm: npm
+            }).orFail().then(result => {
                 let compare = bcrypt.compareSync(oldPwd, result.pwd);
                 if (compare) {
                     bcrypt.hash(newPwd, round).then(hashed => {
-                        User.findByIdAndUpdate(id, {
+                        User.findOneAndUpdate({ npm: npm }, {
                             pwd: hashed
                         }).orFail().then(result => {
                             sendResponse(res, true, 200, result, 'Kata sandi berhasil diperbarui', true);
