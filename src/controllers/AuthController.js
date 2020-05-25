@@ -154,9 +154,9 @@ module.exports = {
             }).then(result => {
                 if (result.n > 0) {
                     if (result.nModified > 0) {
-                        sendResponse(res, true, 200, result, 'Akun berhasil diaktifasi', true);
+                        sendResponse(res, true, 200, result, 'Akun berhasil diaktivasi', true);
                     } else {
-                        sendResponse(res, true, 200, {}, 'Akun sudah aktif tidak perlu diaktifasi kembali', true);
+                        sendResponse(res, true, 200, {}, 'Akun sudah aktif tidak perlu diaktivasi kembali', true);
                     }
                 } else {
                     sendResponse(res, false, 200, {}, `Akun tidak ditemukan`, true);
