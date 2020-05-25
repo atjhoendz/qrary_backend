@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const sendResponse = require('../utils/formatResponse');
-const nodemailer = require('nodemailer');
 const sendMail = require('../utils/sendMail');
 const round = 10;
 
@@ -200,9 +199,9 @@ module.exports = {
                                 <p>Silahkan login ke aplikasi Qrary kemudian lakukan ubah password. Terima kasih.</p>`
                             }
                             if (sendMail(message)) {
-                                res.send('<p>Password berhasil direset. Silahkan cek email anda</p>');
+                                return res.send('<p>Password berhasil direset. Silahkan cek email anda</p>');
                             } else {
-                                res.send('<p>Email tidak berhasil dikirim</p>');
+                                return res.send('<p>Email tidak berhasil dikirim</p>');
                             }
                         }).catch(err => {
                             sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
