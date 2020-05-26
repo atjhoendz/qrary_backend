@@ -35,7 +35,8 @@ const UserSchema = new Schema({
     role: String,
     urlFoto: String,
     isConfirmed: Boolean,
-    isModePinjam: Boolean
+    isModePinjam: Boolean,
+    isResetPwdLinkActive: Boolean
 });
 
 const User = mongoose.model("User", UserSchema, "User");

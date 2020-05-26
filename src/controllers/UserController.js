@@ -5,10 +5,16 @@ const sendMail = require('../utils/sendMail');
 const round = 10;
 
 const randString = (len) => {
-    let alphaNum = '0123456789abcdefghijklmnopqrstuvwxyz';
+    let alpha = 'abcdefghijklmnopqrstuvwxyz';
+    let num = '0123456789';
     let str = '';
-    for (let i = len; i > 0; i--) {
-        str += alphaNum[Math.floor(Math.random() * alphaNum.length)];
+    let front = len - 4;
+    let back = len - front;
+    for (let i = front; i > 0; i--) {
+        str += alpha[Math.floor(Math.random() * alpha.length)];
+    }
+    for (let i = back; i > 0; i--) {
+        str += num[Math.floor(Math.random() * num.length)];
     }
     return str;
 };
@@ -180,38 +186,53 @@ module.exports = {
                 email: email
             }).then(resultFind => {
                 if (resultFind) {
-                    let newPwd = randString(9);
-                    bcrypt.hash(newPwd, round).then(hashed => {
-                        User.findOneAndUpdate({
-                            email: email
-                        }, {
-                            $set: {
-                                pwd: hashed
-                            }
-                        }).then(resultUpdate => {
-                            let message = {
-                                from: 'qrary@himatif.org',
-                                to: email,
-                                subject: 'Reset Password Qrary',
-                                html: `<p>Password berhasil direset dengan informasi sebagai berikut:</p>
+                    if (resultFind.isResetPwdLinkActive == true) {
+                        let newPwd = randString(9);
+                        bcrypt.hash(newPwd, round).then(hashed => {
+                            User.findOneAndUpdate({
+                                email: email
+                            }, {
+                                $set: {
+                                    pwd: hashed
+                                }
+                            }).then(resultUpdate => {
+                                let message = {
+                                    from: 'qrary@himatif.org',
+                                    to: email,
+                                    subject: 'Reset Password Qrary',
+                                    html: `<p>Password berhasil direset dengan informasi sebagai berikut:</p>
                                 <br>
                                 <p><b>Email:</b> ${email}</p>
                                 <p><b>Password Baru:</b> ${newPwd}</p>
                                 <br>
                                 <p>Silahkan login ke aplikasi Qrary kemudian lakukan ubah password. Terima kasih.</p>`
-                            }
-                            if (sendMail(message)) {
-                                console.log('result sendMail : true');
-                                return res.send('<p>Password berhasil direset. Silahkan cek email anda</p>');
-                            } else {
-                                return res.send('<p>Email tidak berhasil dikirim</p>');
-                            }
+                                }
+                                if (sendMail(message)) {
+                                    User.findOneAndUpdate({
+                                        email: email
+                                    }, {
+                                        $set: {
+                                            isResetPwdLinkActive: false
+                                        }
+                                    }).then(updateLink => {
+                                        if (updateLink) {
+                                            return res.send('<p>Password berhasil direset. Silahkan cek email anda</p>');
+                                        }
+                                    }).catch(err => {
+                                        sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+                                    });
+                                } else {
+                                    return res.send('<p>Email tidak berhasil dikirim</p>');
+                                }
+                            }).catch(err => {
+                                sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+                            });
                         }).catch(err => {
                             sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
                         });
-                    }).catch(err => {
-                        sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
-                    });
+                    } else {
+                        return res.send('<p>Url tidak valid. Silahkan periksa kembali</p>');
+                    }
                 } else {
                     sendResponse(res, true, 200, {}, 'Email tidak ditemukan', true);
                 }
@@ -246,10 +267,22 @@ module.exports = {
                     ">RESET PASSWORD</a>`
                 }
                 if (sendMail(message)) {
-                    let emailResponse = {
+                    User.findOneAndUpdate({
                         email: email
-                    }
-                    sendResponse(res, true, 200, emailResponse, 'Email berhasil dikirim', true);
+                    }, {
+                        $set: {
+                            isResetPwdLinkActive: true
+                        }
+                    }).then(updateLink => {
+                        if (updateLink) {
+                            let emailResponse = {
+                                email: email
+                            }
+                            sendResponse(res, true, 200, emailResponse, 'Email berhasil dikirim', true);
+                        }
+                    }).catch(err => {
+                        sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
+                    });
                 } else {
                     sendResponse(res, true, 200, {}, 'tidak berhasil', true);
                 }
