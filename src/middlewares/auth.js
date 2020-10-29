@@ -39,8 +39,8 @@ module.exports = {
         });
     },
     isPageaNumber: (req, res, next) => {
-        let page = Number(req.params.page);
-        let limit = Number(req.params.limit);
+        let page = Number(req.query.page);
+        let limit = Number(req.query.limit);
 
         if (isNaN(page) || isNaN(limit)) {
             sendResponse(res, true, 200, {}, 'Page dan limit harus angka', true);

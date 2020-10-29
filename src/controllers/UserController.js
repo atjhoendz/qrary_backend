@@ -53,8 +53,8 @@ module.exports = {
         });
     },
     getPaginate: (req, res) => {
-        let page = req.params.page;
-        let limit = req.params.limit;
+        let page = req.query.page;
+        let limit = req.query.limit;
 
         User.find({}).orFail().then(result => {
             let total = Object.keys(result).length;
@@ -246,7 +246,7 @@ module.exports = {
     sendMailResetPWD: (req, res) => {
         let email = req.body.email;
 
-        let urlReset = `${process.env.BASEURL}/api/v1/user/reset/pwd?e=${email}&q=${genKeyforURI()}`;
+        let urlReset = `${process.env.BASEURL}/api/v1/user/password/reset?e=${email}&q=${genKeyforURI()}`;
 
         User.findOne({
             email: email
