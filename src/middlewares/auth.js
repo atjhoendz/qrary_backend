@@ -45,8 +45,8 @@ module.exports = {
         if (isNaN(page) || isNaN(limit)) {
             sendResponse(res, true, 200, {}, 'Page dan limit harus angka', true);
         } else {
-            req.params.page = page;
-            req.params.limit = limit;
+            req.query.page = page;
+            req.query.limit = limit;
             next();
         }
     },
