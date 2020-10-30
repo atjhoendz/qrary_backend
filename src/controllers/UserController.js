@@ -53,8 +53,8 @@ module.exports = {
         });
     },
     getPaginate: (req, res) => {
-        let page = req.query.page;
-        let limit = req.query.limit;
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 5;
 
         User.find({}).orFail().then(result => {
             let total = Object.keys(result).length;

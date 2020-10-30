@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { getAll, getPaginate, find, deleteUser, update, updatePassword, setModePinjam, resetPassword, sendMailResetPWD } = require('../controllers/UserController');
-const { isAuth, isContainReqData, isPageaNumber, isAuthorized, isQueryValid } = require('../middlewares/auth');
+const { isAuth, isContainReqData, isAuthorized, isQueryValid } = require('../middlewares/auth');
 
 router.get('/', isAuth, isAuthorized, getAll); // /user/
-router.get('/paginate', isAuth, isPageaNumber, isAuthorized, getPaginate); // /user/paginate?page=1&limit=1
+router.get('/paginate', isAuth, isAuthorized, getPaginate); // /user/paginate?page=1&limit=1
 router.get('/find', isAuth, isQueryValid, find); // /user/find?key=nama&value=blabla
 router.delete('/:id', isAuth, isAuthorized, deleteUser); // /user/:id
 router.put('/:id', isAuth, isContainReqData, update); // /user/:id
