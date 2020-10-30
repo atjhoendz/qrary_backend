@@ -11,7 +11,7 @@ const peminjaman = require('./peminjaman');
 const historyPeminjaman = require('./historyPeminjaman');
 
 const sendResponse = require('../utils/formatResponse');
-const { isAuth, isAuthorized, isContainReqData } = require('../middlewares/auth');
+const { isAuth, isContainReqData } = require('../middlewares/auth');
 
 router.get('/', (req, res) => {
     sendResponse(res, true, 200, {}, 'Qrary API is Running', true);
