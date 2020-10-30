@@ -64,8 +64,8 @@ module.exports = {
         });
     },
     getPaginate: (req, res) => {
-        let page = req.params.page;
-        let limit = req.params.limit;
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 5;
 
         Admin.find({}).orFail().then(result => {
             let total = Object.keys(result).length;
@@ -127,9 +127,9 @@ module.exports = {
             alamat: req.body.alamat,
             urlFoto: setUrlFoto(req.body.nip, 'pegawai')
         }).orFail().then(result => {
-            sendResponse(res, true, 200, result, 'Admin berhasil diperbarui', true);
+            sendResponse(res, true, 200, result, 'Data admin berhasil diperbarui', true);
         }).catch(err => {
-            sendResponse(res, true, 200, {}, 'Admin tidak ditemukan', true);
+            sendResponse(res, true, 200, {}, 'Data admin tidak ditemukan', true);
         });
     },
     updatePassword: (req, res) => {
@@ -162,7 +162,7 @@ module.exports = {
         }
     },
     updateRole: (req, res) => {
-        let id = req.body.id;
+        let id = req.params.id;
         let newRole = req.body.role;
         let allowedRole = ['admin', 'superadmin'];
 

@@ -3,13 +3,13 @@ const router = express.Router();
 const { addAdmin, getAll, find, getPaginate, deleteAdmin, update, updatePassword, updateRole } = require('../controllers/AdminController');
 const { isContainReqData, isAuth, isAuthorized, isValidNIP, isQueryValid } = require('../middlewares/auth');
 
-router.get('/getall', isAuth, isAuthorized, getAll);
-router.get('/find', isAuth, isAuthorized, isQueryValid, find);
-router.get('/page/:page/limit/:limit', isAuth, isAuthorized, getPaginate);
-router.post('/add', isContainReqData, isValidNIP, addAdmin);
-router.delete('/delete/:id', isAuth, isAuthorized, deleteAdmin);
-router.put('/update/role', isAuth, isAuthorized, isContainReqData, updateRole);
-router.put('/update/:id', isAuth, isAuthorized, isContainReqData, update);
-router.put('/update/pwd/:id', isAuth, isAuthorized, isContainReqData, updatePassword);
+router.get('/', isAuth, isAuthorized, getAll); // /admin/
+router.get('/find', isAuth, isAuthorized, isQueryValid, find); // /admin/find?key=nama&value=ininama
+router.get('/paginate', isAuth, isAuthorized, getPaginate); // /admin/paginate?page=1&limit=1
+router.post('/', isContainReqData, isValidNIP, addAdmin); // /admin/
+router.delete('/:id', isAuth, isAuthorized, deleteAdmin); // /admin/:id
+router.put('/:id', isAuth, isAuthorized, isContainReqData, update); // /admin/:id
+router.put('/role/:id', isAuth, isAuthorized, isContainReqData, updateRole); // /admin/role/:id
+router.put('/password/:id', isAuth, isAuthorized, isContainReqData, updatePassword); // /admin/password/:id
 
 module.exports = router;
