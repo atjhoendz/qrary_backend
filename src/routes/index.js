@@ -21,7 +21,7 @@ router.use('/auth', isContainReqData, auth);
 router.use('/user', user);
 router.use('/buku', isAuth, buku);
 router.use('/pengunjung', isAuth, pengunjung);
-router.use('/temp/pinjam', isAuth, tempPeminjaman);
+router.use('/peminjaman/temp', isAuth, tempPeminjaman);
 router.use('/peminjaman', isAuth, peminjaman);
 router.use('/historypeminjaman', isAuth, historyPeminjaman);
 router.use('/admin', admin);

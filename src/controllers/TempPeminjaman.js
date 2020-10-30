@@ -161,13 +161,13 @@ module.exports = {
                             if (resultUpdateTemp) {
                                 sendResponse(res, true, 200, resultBuku, 'Buku berhasil ditambahkan', true);
                             } else {
-                                sendResponse(res, true, 200, {}, 'User pada temp tidak ditemukan', true);
+                                sendResponse(res, true, 200, {}, 'Data temp pinjam tidak ditemukan', true);
                             }
                         }).catch(err => {
                             sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
                         })
                     } else {
-                        sendResponse(res, true, 200, {}, 'User pada temp tidak ditemukan', true);
+                        sendResponse(res, true, 200, {}, 'Data pada temp pinjam tidak ditemukan', true);
                     }
                 }).catch(err => {
                     sendResponse(res, false, 500, '', `Error: ${err.message}`, true);
