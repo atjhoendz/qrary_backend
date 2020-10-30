@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { saveFromTemp, getAll, getPaginate, find, pengembalian } = require('../controllers/PeminjamanController');
-const { isContainReqData, isPageaNumber, isQueryValid } = require('../middlewares/auth');
+const { isContainReqData, isQueryValid } = require('../middlewares/auth');
 
-router.post('/save', isContainReqData, saveFromTemp);
-router.get('/getall', getAll);
-router.get('/page/:page/limit/:limit', isPageaNumber, getPaginate);
-router.get('/find', isQueryValid, find);
-router.post('/kembalikan', isContainReqData, pengembalian);
+router.post('/', isContainReqData, saveFromTemp); // /peminjaman/
+router.get('/', getAll); // /peminjaman/
+router.get('/paginate', getPaginate); // /peminjaman/paginate?page=1&limit=6
+router.get('/find', isQueryValid, find); // /peminjaman/find?key=_id&value=iniidpeminjamannya
+router.delete('/', isContainReqData, pengembalian); // /peminjaman/
 
 module.exports = router;
