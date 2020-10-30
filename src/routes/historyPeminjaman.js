@@ -3,8 +3,8 @@ const router = express.Router();
 const { getAll, getPaginate, find } = require('../controllers/HistoryPeminjamanController');
 const { isPageaNumber } = require('../middlewares/auth');
 
-router.get('/getall', getAll);
-router.get('/page/:page/limit/:limit', isPageaNumber, getPaginate);
-router.get('/find', find);
+router.get('/', getAll); // /historypeminjaman/
+router.get('/paginate', getPaginate); // /historypeminjaman/paginate?page=1&limit=1
+router.get('/find', find); // /historypeminjaman/find?key=nama&value=ininama
 
 module.exports = router;

@@ -25,8 +25,8 @@ module.exports = {
         });
     },
     getPaginate: (req, res) => {
-        let page = req.params.page;
-        let limit = req.params.limit;
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 5;
 
         HistoryPeminjaman.find({}).orFail().then(result => {
             let total = Object.keys(result).length;
