@@ -36,8 +36,8 @@ module.exports = {
         });
     },
     getPaginate: (req, res) => {
-        let page = req.params.page;
-        let limit = req.params.limit;
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 5;
 
         Buku.find({}).orFail().then(result => {
             let total = Object.keys(result).length;
@@ -170,6 +170,7 @@ module.exports = {
     },
     update: (req, res) => {
         let id = req.params.id;
+
         Buku.findByIdAndUpdate(id, {
             bahasa: req.body.bahasa,
             isbn: req.body.isbn,
@@ -184,7 +185,7 @@ module.exports = {
             status: req.body.status,
             urlFoto: req.body.urlFoto
         }).then(result => {
-            if (Object.keys(result).length > 0) {
+            if (result) {
                 sendResponse(res, true, 200, result, 'Buku berhasil diperbarui', true);
             } else {
                 sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
@@ -194,7 +195,7 @@ module.exports = {
         });
     },
     getRecentBook: (req, res) => {
-        Buku.find().sort({ '_id': -1 }).limit(Number(req.params.limit)).then(result => {
+        Buku.find().sort({ '_id': -1 }).limit(Number(req.query.limit) || 6).then(result => {
             sendResponse(res, true, 200, result, 'Data buku terbaru berhasil didapatkan', true);
         }).catch(err => {
             sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
