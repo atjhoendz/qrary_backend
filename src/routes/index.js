@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
     sendResponse(res, true, 200, {}, 'Qrary API is Running', true);
 });
 
-router.use('/auth', isContainReqData, auth);
+router.use('/auth', auth);
 router.use('/user', user);
 router.use('/buku', isAuth, buku);
 router.use('/pengunjung', isAuth, pengunjung);

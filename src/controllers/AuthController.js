@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
+const axios = require('axios')
+
 const sendResponse = require('../utils/formatResponse');
 const setUrlFoto = require('../utils/setUrlFoto');
 const genInfoFromNPM = require('../utils/genInfoFromNPM');
@@ -56,6 +58,18 @@ const sendEmailOTP = (email, res) => {
 }
 
 module.exports = {
+    getDataPaus: (req, res) => {
+        let npm = req.params.npm
+        
+        let url = `https://siat.unpad.ac.id/index.php/akademik/datamhs/mahasiswa/getmhs/${npm}/npm/${process.env.PAUS_CLIENT_ID}/${process.env.PAUS_CLIENT_SECRET}`
+        axios.get(url).then((response) => {
+            if(response.data.error)
+                return sendResponse(res, true, 200, {}, 'Data tidak tersedia, NPM tidak valid', true)
+            return sendResponse(res, true, 200, response.data, 'Data tersedia', true)
+        }).catch(err => {
+            sendResponse(res, false, 500, `Error: ${err.message}`, true)
+        })
+    },
     register: (req, res) => {
         let pwd = req.body.pwd;
         let confirmPwd = req.body.confirmPwd;
