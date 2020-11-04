@@ -1,1 +1,0 @@
-api: node src/app.js
