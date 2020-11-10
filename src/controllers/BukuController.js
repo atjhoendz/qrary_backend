@@ -1,7 +1,9 @@
-const Buku = require('../models/buku');
-const Peminjaman = require('../models/peminjaman');
-const sendResponse = require('../utils/formatResponse');
-const mongoose = require('mongoose');
+const Buku = require('../models/buku')
+const Peminjaman = require('../models/peminjaman')
+const sendResponse = require('../utils/formatResponse')
+const mongoose = require('mongoose')
+const fs = require('fs')
+const { send } = require('process')
 
 const setKategori = (kategori) => {
     return kategori.split(',');
@@ -21,7 +23,7 @@ module.exports = {
             penerjemah: req.body.penerjemah,
             tanggalTerbit: req.body.tanggalTerbit,
             status: req.body.status,
-            urlFoto: req.body.urlFoto
+            coverBuku: process.env.BASE_URL + req.file.path
         }).then(buku => {
             sendResponse(res, true, 201, buku, 'Buku berhasil ditambahkan', true);
         }).catch(err => {
@@ -155,7 +157,14 @@ module.exports = {
                         Buku.deleteOne({
                             _id: id
                         }).orFail().then(result => {
-                            sendResponse(res, true, 200, result, 'Buku berhasil dihapus', true);
+                            let nameCoverBuku = resultFindBuku.coverBuku.substring(resultFindBuku.coverBuku.lastIndexOf('/') + 1)
+                            let pathCoverBuku = './public/data/coverbuku/' + nameCoverBuku
+
+                            fs.unlink(pathCoverBuku, (err) => {
+                                if (err)
+                                    return sendResponse(res, true, 200, result, 'Buku berhasil dihapus, File cover tidak ditemukan', true)
+                                return sendResponse(res, true, 200, result, 'Buku berhasil dihapus', true);  
+                            })
                         }).catch(err => {
                             sendResponse(res, true, 200, {}, 'Buku tidak ditemukan', true);
                         });
@@ -183,7 +192,7 @@ module.exports = {
             penerjemah: req.body.penerjemah,
             tanggalTerbit: req.body.tanggalTerbit,
             status: req.body.status,
-            urlFoto: req.body.urlFoto
+            coverBuku: req.body.coverBuku
         }).then(result => {
             if (result) {
                 sendResponse(res, true, 200, result, 'Buku berhasil diperbarui', true);
@@ -193,6 +202,19 @@ module.exports = {
         }).catch(err => {
             sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
         });
+    },
+    updateCover: (req, res) => {
+        let id = req.params.id
+
+        Buku.findByIdAndUpdate(id, {
+            coverBuku: process.env.BASE_URL + req.file.path
+        }).then(result => {
+            if (result)
+                return sendResponse(res, true, 200, result, 'Cover Buku berhasil diperbarui', true)
+            return sendResponse(res, true, 200, {}, 'Data buku tidak ditemukan', true)
+        }).catch(err => {
+            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true)
+        })
     },
     getRecentBook: (req, res) => {
         Buku.find().sort({ '_id': -1 }).limit(Number(req.query.limit) || 6).then(result => {

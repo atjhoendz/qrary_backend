@@ -19,7 +19,7 @@ const BukuSchema = new Schema({
     penerjemah: String,
     tanggalTerbit: String,
     status: String,
-    urlFoto: String
+    coverBuku: String
 });
 
 const Buku = mongoose.model("Buku", BukuSchema, "Buku");
