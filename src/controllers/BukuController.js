@@ -3,7 +3,6 @@ const Peminjaman = require('../models/peminjaman')
 const sendResponse = require('../utils/formatResponse')
 const mongoose = require('mongoose')
 const fs = require('fs')
-const { send } = require('process')
 
 const setKategori = (kategori) => {
     return kategori.split(',');
