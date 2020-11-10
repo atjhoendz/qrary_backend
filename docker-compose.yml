@@ -5,10 +5,10 @@ services:
     restart: always
     build: ./
     ports:
-    - "8888:8080"
+      - "8080:8080"
     volumes:
-    - .:/app
-    - /app/node_modules
+      - .:/app
+      - /app/node_modules
     depends_on:
       - mongo
     environment:
@@ -21,11 +21,11 @@ services:
     restart: always
     image: mongo
     ports:
-    - "27017:27017"
+      - "27017:27017"
     volumes:
-    - mongo:/data/db
+      - mongo:/data/db
     networks:
-    - express_mongo-network
+      - express_mongo-network
 
 volumes:
   mongo:
