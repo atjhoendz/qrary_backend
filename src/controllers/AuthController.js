@@ -67,7 +67,7 @@ module.exports = {
                 return sendResponse(res, true, 200, {}, 'Data tidak tersedia, NPM tidak valid', true)
             return sendResponse(res, true, 200, response.data, 'Data tersedia', true)
         }).catch(err => {
-            sendResponse(res, false, 500, `Error: ${err.message}`, true)
+            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true)
         })
     },
     register: (req, res) => {
@@ -149,7 +149,23 @@ module.exports = {
     },
     sendOTP: (req, res) => {
         let emailto = req.body.email;
-        sendEmailOTP(emailto, res);
+
+        const url = 'https://qrary-mail-service.herokuapp.com/api/v1/auth/send/OTP'
+        axios.post(
+            url,
+            {
+                "email": emailto
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(response => {
+            return sendResponse(res, true, 200, response.data.data, 'Kode OTP berhasil dikirim', true)
+        }).catch(err => {
+            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true)
+        })
     },
     verifyOTP: (req, res) => {
         let otp = req.body.otp;
