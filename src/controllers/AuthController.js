@@ -20,43 +20,6 @@ const generateOTP = () => {
     return token;
 };
 
-const sendEmailOTP = (email, res) => {
-    let transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_SMTP,
-        port: process.env.EMAIL_PORT,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
-
-    let code = generateOTP();
-
-    let message = {
-        from: 'qrary@himatif.org',
-        to: email,
-        subject: 'Qrary Verification Code',
-        text: `Verification Code : ${code}`
-    }
-
-    // Send Email
-
-    transporter.sendMail(message).then(info => {
-        if (res == null) {
-            console.log('Kode OTP berhasil dikirim');
-        } else {
-            sendResponse(res, true, 200, info, 'Kode OTP berhasil dikirim', true);
-        }
-    }).catch(err => {
-        if (res == null) {
-            console.log(`Sendmail error: ${err.message}`);
-        } else {
-            sendResponse(res, false, 500, {}, `Error: ${err.message}`, true);
-        }
-    });
-}
-
 module.exports = {
     getDataPaus: (req, res) => {
         let npm = req.params.npm
@@ -150,11 +113,20 @@ module.exports = {
     sendOTP: (req, res) => {
         let emailto = req.body.email;
 
-        const url = 'https://qrary-mail-service.herokuapp.com/api/v1/auth/send/OTP'
+        let code = generateOTP();
+
+        let message = {
+            from: 'qrary@himatif.org',
+            to: emailto,
+            subject: 'Qrary Verification Code',
+            text: `Verification Code : ${code}`
+        }
+
+        const url = 'https://qrary-mail-service.herokuapp.com/api/v1/email'
         axios.post(
             url,
             {
-                "email": emailto
+                "message": message
             },
             {
                 headers: {
@@ -162,7 +134,9 @@ module.exports = {
                 }
             }
         ).then(response => {
-            return sendResponse(res, true, 200, response.data.data, 'Kode OTP berhasil dikirim', true)
+            if (response.data.success)
+                return sendResponse(res, true, 200, {}, 'Kode OTP berhasil dikirim', true)
+            return sendResponse(res, true, 200, {}, response.data.message, true)
         }).catch(err => {
             sendResponse(res, false, 500, {}, `Error: ${err.message}`, true)
         })

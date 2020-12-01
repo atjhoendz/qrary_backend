@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const sendResponse = require('../utils/formatResponse');
-const sendMail = require('../utils/sendMail');
+const axios = require('axios');
 const round = 10;
 
 const randString = (len) => {
@@ -42,6 +42,25 @@ const checkKeyforURL = (hashedKey) => {
     let isValid = bcrypt.compareSync(key, hashedKey);
 
     return isValid;
+}
+
+const sendMailService = (message) => {
+    const url = 'https://qrary-mail-service.herokuapp.com/api/v1/email'
+    axios.post(
+        url,
+        {
+            "message": message
+        },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    ).then(response => {
+        return response.data.success
+    }).catch(err => {
+        return false
+    })
 }
 
 module.exports = {
@@ -207,7 +226,7 @@ module.exports = {
                                 <br>
                                 <p>Silahkan login ke aplikasi Qrary kemudian lakukan ubah password. Terima kasih.</p>`
                                 }
-                                if (sendMail(message)) {
+                                if (sendMailService(message)) {
                                     User.findOneAndUpdate({
                                         email: email
                                     }, {
@@ -266,7 +285,7 @@ module.exports = {
                     margin: 10px;
                     ">RESET PASSWORD</a>`
                 }
-                if (sendMail(message)) {
+                if (sendMailService(message)) {
                     User.findOneAndUpdate({
                         email: email
                     }, {
