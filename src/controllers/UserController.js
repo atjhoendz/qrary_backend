@@ -44,9 +44,10 @@ const checkKeyforURL = (hashedKey) => {
     return isValid;
 }
 
-const sendMailService = (message) => {
+const sendMailService = async (message) => {
     const url = 'https://qrary-mail-service.herokuapp.com/api/v1/email'
-    axios.post(
+
+    const response = await axios.post(
         url,
         {
             "message": message
@@ -56,11 +57,9 @@ const sendMailService = (message) => {
                 "Content-Type": "application/json"
             }
         }
-    ).then(response => {
-        return response.data.success
-    }).catch(err => {
-        return false
-    })
+    );
+
+    return response.data.success;
 }
 
 module.exports = {
@@ -265,7 +264,7 @@ module.exports = {
     sendMailResetPWD: (req, res) => {
         let email = req.body.email;
 
-        let urlReset = `${process.env.BASEURL}/api/v1/user/password/reset?e=${email}&q=${genKeyforURI()}`;
+        let urlReset = `${process.env.BASE_URL}/api/v1/user/password/reset?e=${email}&q=${genKeyforURI()}`;
 
         User.findOne({
             email: email
@@ -285,7 +284,10 @@ module.exports = {
                     margin: 10px;
                     ">RESET PASSWORD</a>`
                 }
-                if (sendMailService(message)) {
+
+                const isMailSuccess = sendMailService(message);
+                console.log(isMailSuccess);
+                if (isMailSuccess) {
                     User.findOneAndUpdate({
                         email: email
                     }, {
