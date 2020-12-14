@@ -26,7 +26,9 @@ services:
       - mongo:/data/db
     networks:
       - express_mongo-network
-
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: atjhoendzadmin
+      MONGO_INITDB_ROOT_PASSWORD: pwdqraryadmin
 volumes:
   mongo:
     name: mongo
