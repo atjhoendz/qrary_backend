@@ -264,7 +264,7 @@ module.exports = {
     sendMailResetPWD: (req, res) => {
         let email = req.body.email;
 
-        let urlReset = `${process.env.BASE_URL}/api/v1/user/password/reset?e=${email}&q=${genKeyforURI()}`;
+        let urlReset = `${process.env.BASE_URL}api/v1/user/password/reset?e=${email}&q=${genKeyforURI()}`;
 
         User.findOne({
             email: email
